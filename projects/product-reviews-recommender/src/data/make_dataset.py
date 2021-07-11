@@ -3,6 +3,7 @@ import click
 import glob
 import pandas as pd
 import logging
+import sys
 
 from data import read_json
 from datetime import datetime
@@ -20,11 +21,14 @@ def set_logger(log_path):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(log_path, mode="w")
+    stream_handler = logging.StreamHandler(sys.stdout)
     formatter = logging.Formatter(
         "%(asctime)s : %(levelname)s : %(name)s : %(message)s"
     )
     file_handler.setFormatter(formatter)
+    stream_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
     logger.info(f"Finished logger configuration!")
 
     return logger
@@ -79,18 +83,19 @@ def main(input_filepath, output_filepath):
 
     # sorting ensures corresponding index between reviews and metadata of categories
     reviews_jsons = sorted([f for f in glob.glob(f"{input_filepath /'*_5.json'}")])
-    cat_names = [str(name).split("/")[-1].split(".")[0] for name in reviews_jsons]
+    meta_jsons = sorted([f for f in glob.glob(f"{input_filepath /'meta_*.json'}")])
+    cat_names = [str(name).split("/")[-1].split(".")[0] for name in meta_jsons]
     logger.info(f"Reviews jsons: {reviews_jsons}")
+    logger.info(f"Meta jsons: {meta_jsons}")
 
     for i in tqdm(range(len(reviews_jsons))):
         logger.info(f"Transforming: {cat_names[i]}")
         reviews = read_json(f"{reviews_jsons[i]}")
-        # meta = read_json(f"{meta_jsons[i]}")
-        # overall = pd.merge(reviews, meta, how="inner", on="asin")
+        meta = read_json(f"{meta_jsons[i]}")
 
         # selecting relevant columns only
-        cols_to_keep = ["overall", "reviewerID", "asin", "reviewText"]
-        reviews = reviews[cols_to_keep]
+        reviews_cols_to_keep = ["overall", "reviewerID", "asin", "reviewText"]
+        reviews = reviews[reviews_cols_to_keep]
         logger.info(
             f"Num ratings: {reviews['overall'].count()}, "
             f"reviews: {reviews['reviewText'].count()}, "
@@ -98,12 +103,19 @@ def main(input_filepath, output_filepath):
             f"items: {reviews['asin'].nunique()}"
         )
 
+        meta_cols_to_keep = ["title", "brand", "asin"]
+        meta = meta[meta_cols_to_keep]
+        # ref: https://colab.research.google.com/drive/1Zv6MARGQcrBbLHyjPVVMZVnRWsRnVMpV
+        # removing unformatted title (i.e. some 'title' may still contain html style content)
+        meta = meta[~meta.title.str.contains("getTime")]
+
         # logging sparsity
         rating_sparsity, review_sparsity = calculate_sparsity(reviews)
         logger.info(f"Sparsity: {rating_sparsity} rating, {review_sparsity} review.")
 
-        # saving overall dataframe to output path
+        # saving dataframes to output path
         reviews.to_csv(output_filepath / f"{cat_names[i]}_merged.csv", index=False)
+        meta.to_csv(output_filepath / f"meta_{cat_names[i]}.csv", index=False)
 
 
 if __name__ == "__main__":
