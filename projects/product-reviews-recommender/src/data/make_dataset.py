@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import click
 import glob
-import pandas as pd
 import logging
+import pandas as pd
 import sys
+import ujson
 
 from data import read_json
 from datetime import datetime
@@ -11,7 +12,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 
-def set_logger(log_path):
+def _set_logger(log_path):
     """Setting logger for logging code execution.
     Args:
         log_path [str]: eg: "../log/train.log"
@@ -27,14 +28,32 @@ def set_logger(log_path):
     )
     file_handler.setFormatter(formatter)
     stream_handler.setFormatter(formatter)
+
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    logger.info(f"Finished logger configuration!")
+
+    logger.info("Finished logger configuration!")
 
     return logger
 
 
-def calculate_sparsity(df):
+def _read_json(json_path):
+    """Read json file into dataframe.
+
+        Args:
+            json [str]: Path to json dataset.
+        Returns:
+            df [pd.DataFrame]: Json file loaded into dataframe.
+    """
+
+    with open(json_path, "rb") as f:
+        data = f.readlines()
+        data = [ujson.loads(line.strip()) for line in data]
+
+    return data
+
+
+def _calculate_sparsity(df):
     """[summary]
 
     Args:
@@ -73,7 +92,7 @@ def main(input_filepath, output_filepath):
         input_filepath [(str)]: Path to the raw data.
         ouput_filepath ([str]): Path to store the interim data.
     """
-    logger = set_logger(
+    logger = _set_logger(
         f"log/make_dataset/make-dataset-{datetime.today().strftime('%b-%d-%Y')}"
     )
     logger.info("Loading raw reviews and metadata into merged data.")
@@ -84,14 +103,14 @@ def main(input_filepath, output_filepath):
     # sorting ensures corresponding index between reviews and metadata of categories
     reviews_jsons = sorted([f for f in glob.glob(f"{input_filepath /'*_5.json'}")])
     meta_jsons = sorted([f for f in glob.glob(f"{input_filepath /'meta_*.json'}")])
-    cat_names = [str(name).split("/")[-1].split(".")[0] for name in meta_jsons]
+    cat_names = [str(name).split("/")[-1].split(".")[0] for name in reviews_jsons]
     logger.info(f"Reviews jsons: {reviews_jsons}")
     logger.info(f"Meta jsons: {meta_jsons}")
 
     for i in tqdm(range(len(reviews_jsons))):
-        logger.info(f"Transforming: {cat_names[i]}")
-        reviews = read_json(f"{reviews_jsons[i]}")
-        meta = read_json(f"{meta_jsons[i]}")
+        logger.info("Reading raw reviews and metadata into dataframes.")
+        reviews = pd.DataFrame.from_dict(_read_json(f"{reviews_jsons[i]}"))
+        meta = pd.DataFrame.from_dict(_read_json(f"{meta_jsons[i]}"))
 
         # selecting relevant columns only
         reviews_cols_to_keep = ["overall", "reviewerID", "asin", "reviewText"]
@@ -109,12 +128,16 @@ def main(input_filepath, output_filepath):
         # removing unformatted title (i.e. some 'title' may still contain html style content)
         meta = meta[~meta.title.str.contains("getTime")]
 
+        # dataframe overview
+        logger.info(reviews.info(memory_usage="deep"))
+        logger.info(meta.info(memory_usage="deep"))
+
         # logging sparsity
-        rating_sparsity, review_sparsity = calculate_sparsity(reviews)
+        rating_sparsity, review_sparsity = _calculate_sparsity(reviews)
         logger.info(f"Sparsity: {rating_sparsity} rating, {review_sparsity} review.")
 
         # saving dataframes to output path
-        reviews.to_csv(output_filepath / f"{cat_names[i]}_merged.csv", index=False)
+        reviews.to_csv(output_filepath / f"{cat_names[i]}_5.csv", index=False)
         meta.to_csv(output_filepath / f"meta_{cat_names[i]}.csv", index=False)
 
 
