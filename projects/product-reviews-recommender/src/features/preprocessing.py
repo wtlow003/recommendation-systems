@@ -1,3 +1,4 @@
+from os import defpath
 import numpy as np
 import pandas as pd
 
@@ -24,16 +25,18 @@ def compute_mean_ratings(df, count_col, rating_col):
         target_col ([type]): [description]
     """
 
-    prod_mean_ratings = df.groupby(['asin']).agg({rating_col: np.mean}).reset_index()
-    prod_count_ratings = df.groupby(['asin']).agg({count_col: 'count'}).reset_index()
-    prod_ratings_merged = pd.merge(prod_count_ratings, prod_mean_ratings, how='inner', on='asin')
+    prod_mean_ratings = df.groupby(["asin"]).agg({rating_col: np.mean}).reset_index()
+    prod_count_ratings = df.groupby(["asin"]).agg({count_col: "count"}).reset_index()
+    prod_ratings_merged = pd.merge(
+        prod_count_ratings, prod_mean_ratings, how="inner", on="asin"
+    )
 
-    prod_ratings_merged.columns = ['asin', 'rating_counts', 'rating_average']
+    prod_ratings_merged.columns = ["asin", "rating_counts", "rating_average"]
 
     return prod_ratings_merged
 
 
-def compute_weighted_ratings(df, count_col, avg_rating_col, threshold=.75):
+def compute_weighted_ratings(df, count_col, avg_rating_col, threshold=0.75):
     """Computes weighted ratings based on number of ratings and average rating.
 
         Args:
@@ -46,11 +49,32 @@ def compute_weighted_ratings(df, count_col, avg_rating_col, threshold=.75):
     """
 
     m = df[count_col].quantile(threshold)
-    C = df[avg_rating_col].mean()    # global average rating
+    C = df[avg_rating_col].mean()  # global average rating
 
-    df['rating_weighted'] = (df.apply(lambda x: ((x[count_col]/(x[count_col] + m)
-                                                  * x[avg_rating_col])
-                                                 + (m/(m + x[count_col]) * C)), axis=1)
-                            )
+    df["rating_weighted"] = df.apply(
+        lambda x: (
+            (x[count_col] / (x[count_col] + m) * x[avg_rating_col])
+            + (m / (m + x[count_col]) * C)
+        ),
+        axis=1,
+    )
+
+    return df
+
+
+def removing_missing_reviews(df, review):
+    """[summary]
+
+    Args:
+        df ([type]): [description]
+        review ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+    df[review] = df[review].progress_apply(lambda x: " ".join(x))
+    df[review] = df[review].replace({"": np.nan})
+    df.dropna(subset=[review], axis=0, inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
     return df
