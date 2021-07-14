@@ -43,13 +43,17 @@ class EmbeddedMF(surprise.AlgoBase):
         self.num_factors = num_factors
 
     def fit(self, train):
-        # Instead of random initialization n-latent factors,
-        # We initialiazed the latent factors using the D2V aggregated embedding vectors
-        # By both user and items, where each embedding is represented by the content
-        # of their reviews.
-        # This is based on the idea: https://doi.org/10.1145/3383313.3412207
-        # Where they initialized the latent factor models using topic vectors generated
-        # through NMF.
+        """Instead of random initialization n-latent factors,
+           We initialiazed the latent factors using the D2V aggregated embedding vectors
+           By both user and items, where each embedding is represented by the content
+           of their reviews. This is based on the idea: https://doi.org/10.1145/3383313.3412207
+           Where they initialized the latent factor models using topic vectors generated
+           through NMF.
+
+            Args:
+                train ([type]): [description]
+        """
+
         surprise.AlgoBase.fit(self, train)
         P = self.user_embedding
         Q = self.item_embedding
@@ -82,28 +86,42 @@ class EmbeddedMF(surprise.AlgoBase):
                     P[ui, f] += self.alpha * (err * Q_if - self.beta * P_uf)
                     Q[ii, f] += self.alpha * (err * P_uf - self.beta * Q_if)
 
-                    # print(P[ui, :], Q[ii, :], sep='\n')
-
         self.P = P
         self.Q = Q
         self.bias_u = bias_u
         self.bias_i = bias_i
         self.trainset = train
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, clip=True):
         """Returns estimated rating for user u, and item i.
 
            Prerequisite: Algorithm must be fit to training set.
+
+            Args:
+                u ([type]): [description]
+                i ([type]): [description]
+                clip (bool, optional): [description]. Defaults to True.
+
+            Returns:
+                [type]: [description]
         """
+
         known_user = self.trainset.knows_user(u)
         known_item = self.trainset.knows_item(i)
         est = self.trainset.global_mean
 
         if known_user:
             est += self.bias_u[u]
+
         if known_item:
             est += self.bias_i[i]
+
         if known_user and known_item:
             est += np.dot(self.P[u, :], self.Q[i, :])
+
+        if clip:
+            min_rating, max_rating = self.trainset.rating_scale
+            est = min(est, max_rating)
+            est = max(est, min_rating)
 
         return est
