@@ -34,7 +34,7 @@ def spelling_correction(sentence):
         [type]: [description]
     """
     sent = TextBlob(sentence)
-    sent = sent.corect()
+    sent = sent.correct()
 
     return sent
 
@@ -48,12 +48,12 @@ def text_preprocess(review):
     Returns:
         [type]: [description]
     """
+    # review = spelling_correction(review)
     review = " ".join(str(review).splitlines())  # remove whitespace characters
     review = re.sub(r"http\S+", "", str(review))  # remove links
     review = contractions.fix(review)  # expand contractions
     review = re.sub(r"[^\w\s]", " ", str(review))  # remove punctuations
     review = re.sub(r"'", "", str(review))  # remove single quotes
-    # review = spelling_correction(review)
     review = remove_stopwords(review)
     review = lemmatize_with_postags(review)  # lemmatize sentence
     review = simple_preprocess(review, deacc=True)

@@ -6,7 +6,6 @@ import pandas as pd
 import sys
 import ujson
 
-from data import read_json
 from datetime import datetime
 from pathlib import Path
 from tqdm import tqdm
@@ -102,15 +101,15 @@ def main(input_filepath, output_filepath):
 
     # sorting ensures corresponding index between reviews and metadata of categories
     reviews_jsons = sorted([f for f in glob.glob(f"{input_filepath /'*_5.json'}")])
-    meta_jsons = sorted([f for f in glob.glob(f"{input_filepath /'meta_*.json'}")])
+    # meta_jsons = sorted([f for f in glob.glob(f"{input_filepath /'meta_*.json'}")])
     cat_names = [str(name).split("/")[-1].split(".")[0] for name in reviews_jsons]
     logger.info(f"Reviews jsons: {reviews_jsons}")
-    logger.info(f"Meta jsons: {meta_jsons}")
+    # logger.info(f"Meta jsons: {meta_jsons}")
 
     for i in tqdm(range(len(reviews_jsons))):
         logger.info("Reading raw reviews and metadata into dataframes.")
         reviews = pd.DataFrame.from_dict(_read_json(f"{reviews_jsons[i]}"))
-        meta = pd.DataFrame.from_dict(_read_json(f"{meta_jsons[i]}"))
+        # meta = pd.DataFrame.from_dict(_read_json(f"{meta_jsons[i]}"))
 
         # selecting relevant columns only
         reviews_cols_to_keep = ["overall", "reviewerID", "asin", "reviewText"]
@@ -122,23 +121,23 @@ def main(input_filepath, output_filepath):
             f"items: {reviews['asin'].nunique()}"
         )
 
-        meta_cols_to_keep = ["title", "brand", "asin"]
-        meta = meta[meta_cols_to_keep]
-        # ref: https://colab.research.google.com/drive/1Zv6MARGQcrBbLHyjPVVMZVnRWsRnVMpV
-        # removing unformatted title (i.e. some 'title' may still contain html style content)
-        meta = meta[~meta.title.str.contains("getTime")]
+        # meta_cols_to_keep = ["title", "brand", "asin"]
+        # meta = meta[meta_cols_to_keep]
+        # # ref: https://colab.research.google.com/drive/1Zv6MARGQcrBbLHyjPVVMZVnRWsRnVMpV
+        # # removing unformatted title (i.e. some 'title' may still contain html style content)
+        # meta = meta[~meta.title.str.contains("getTime", na=False)]
 
         # dataframe overview
         logger.info(reviews.info(memory_usage="deep"))
-        logger.info(meta.info(memory_usage="deep"))
+        # logger.info(meta.info(memory_usage="deep"))
 
         # logging sparsity
         rating_sparsity, review_sparsity = _calculate_sparsity(reviews)
         logger.info(f"Sparsity: {rating_sparsity} rating, {review_sparsity} review.")
 
         # saving dataframes to output path
-        reviews.to_csv(output_filepath / f"{cat_names[i]}_5.csv", index=False)
-        meta.to_csv(output_filepath / f"meta_{cat_names[i]}.csv", index=False)
+        reviews.to_csv(output_filepath / f"{cat_names[i]}.csv", index=False)
+        # meta.to_csv(output_filepath / f"meta_{cat_names[i]}.csv", index=False)
 
 
 if __name__ == "__main__":
