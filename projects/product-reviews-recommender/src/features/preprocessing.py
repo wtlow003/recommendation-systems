@@ -1,6 +1,7 @@
-from os import defpath
 import numpy as np
 import pandas as pd
+
+from gensim.models.doc2vec import TaggedDocument
 
 
 def filter_min_length(df, target_col, threshold=100):
@@ -78,3 +79,32 @@ def removing_missing_reviews(df, review):
     df.reset_index(drop=True, inplace=True)
 
     return df
+
+
+def prepare_tagged_documents(users, asins, reviews, df):
+    """[summary]
+
+    Args:
+        users ([type]): [description]
+        asins ([type]): [description]
+        reviews ([type]): [description]
+        df ([type]): [description]x
+
+    Returns:
+        [type]: [description]
+    """
+    users = list(df[users])
+    asins = list(df[asins])
+    reviews = list(df[reviews])
+
+    # creating tagged documents, user and items
+    user_documents = [
+        TaggedDocument(doc[1], [str(doc[0])])
+        for _, doc in enumerate(zip(users, reviews))
+    ]
+    asin_documents = [
+        TaggedDocument(doc[1], [str(doc[0])])
+        for _, doc in enumerate(zip(asins, reviews))
+    ]
+
+    return user_documents, asin_documents
