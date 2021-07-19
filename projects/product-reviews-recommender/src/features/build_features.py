@@ -48,7 +48,6 @@ def text_preprocess(review):
     Returns:
         [type]: [description]
     """
-    # review = spelling_correction(review)
     review = " ".join(str(review).splitlines())  # remove whitespace characters
     review = re.sub(r"http\S+", "", str(review))  # remove links
     review = contractions.fix(review)  # expand contractions
