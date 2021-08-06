@@ -1,0 +1,8 @@
+# file params.yaml for DVC
+
+
+prepare:
+    categories:
+      Clothing_Shoes_and_Jewelry
+
+
