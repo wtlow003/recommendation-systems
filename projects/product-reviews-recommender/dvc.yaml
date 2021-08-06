@@ -1,0 +1,8 @@
+stages:
+  prepare:
+    cmd: python3 src/prepare.py
+    deps:
+    - data/raw
+    - src/prepare.py
+    outs:
+    - data/interim
