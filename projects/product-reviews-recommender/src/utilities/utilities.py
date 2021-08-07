@@ -5,11 +5,11 @@ import pandas as pd
 def retrieve_nuniques(df, target_col):
     """Retrieve unique summary count of target column in a dataframe.
 
-        Args:
-            df [pd.DataFrame]:
-            target_col [str]:
-        Returns:
-            unique_counts [pd.DataFrame]:
+    Args:
+        df [pd.DataFrame]:
+        target_col [str]:
+    Returns:
+        unique_counts [pd.DataFrame]:
     """
 
     # check unique values
@@ -31,12 +31,12 @@ def summary_statistics(df, cols=["reviewerID", "reviewText", "asin"]):
 def reviews_count(df, agg="count"):
     """Retrieving aggregrated review counts based on target group.
 
-        Args:
-            df [pd.DataFrame]:
-            group [str]:
-            agg [str]:
-        Returns:
-            reviews_by_group [pd.DataFrame]
+    Args:
+        df [pd.DataFrame]:
+        group [str]:
+        agg [str]:
+    Returns:
+        reviews_by_group [pd.DataFrame]
     """
 
     reviews_by_prod = df.groupby(["asin"]).agg({"reviewText": agg})
@@ -62,3 +62,65 @@ def reviews_count(df, agg="count"):
         f"The interquartile range:\n{reviews_by_user['reviewText'].quantile([.25, 0.5, .75])}\n"
     )
 
+
+def text_statistics(df: pd.DataFrame, text_col: str) -> None:
+    """Review text statistics.
+
+    Args:
+        df ([pd.DataFrame]): DataFrame consisting of review texts.
+        text_col ([str]): Column name for review text.
+    """
+    # generating text length on characters and word level
+    df["reviewCharLength"] = df[text_col].apply(lambda x: len(x))
+    df["reviewWordLength"] = df[text_col].apply(lambda x: len(x.split()))
+
+    # statistics by characters
+    min_char_length = df["reviewCharLength"].min()
+    max_char_length = df["reviewCharLength"].max()
+    avg_char_length = df["reviewCharLength"].mean()
+    med_char_length = df["reviewCharLength"].median()
+
+    # statistics by words
+    min_word_length = df["reviewWordLength"].min()
+    max_word_length = df["reviewWordLength"].max()
+    avg_word_length = df["reviewWordLength"].mean()
+    med_word_length = df["reviewWordLength"].median()
+
+    # print
+    print("Text statistics:\n")
+    print(
+        f"Minimum `reviewText` length: {min_char_length} characters, {min_word_length} words."
+    )
+    print(
+        f"Maximum `reviewText` length: {max_char_length} characters, {max_word_length} words."
+    )
+    print(
+        f"Mean `reviewText` length: {avg_char_length:.2f} characters, {avg_word_length:.2f} words."
+    )
+    print(
+        f"Median `reviewText` length: {med_char_length} characters, {med_word_length} words."
+    )
+
+
+def token_statistics(df: pd.DataFrame, token_col: str) -> None:
+    """Post-tokenization statistics.
+
+    Args:
+        df ([pd.DataFrame]): DataFrame consisting of review texts.
+        token_col ([str]): Column name of tokenized review text.
+    """
+    # generating token counts
+    df["reviewTokenCount"] = df[token_col].apply(lambda x: len(x))
+
+    # statistics by words
+    min_word_length = df["reviewTokenCount"].min()
+    max_word_length = df["reviewTokenCount"].max()
+    avg_word_length = df["reviewTokenCount"].mean()
+    med_word_length = df["reviewTokenCount"].median()
+
+    # print
+    print("Token statistics:\n")
+    print(f"Minimum `reviewText` tokens: {min_word_length} tokens.")
+    print(f"Maximum `reviewText` tokens: {max_word_length} tokens.")
+    print(f"Mean `reviewText` tokens: {avg_word_length:.2f} tokens.")
+    print(f"Median `reviewText` tokens: {med_word_length} tokens.")
