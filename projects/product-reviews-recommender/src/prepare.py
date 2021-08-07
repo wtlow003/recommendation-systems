@@ -11,6 +11,7 @@ import yaml
 
 from data.make_dataset import calculate_sparsity, json_to_df
 
+
 def _set_logger(log_path):
     """Setting logger for logging code execution.
 
@@ -39,11 +40,12 @@ def _set_logger(log_path):
 
     return logger
 
+
 @click.command()
 @click.argument("input_filepath", type=str, default="data/raw")
 @click.argument("output_filepath", type=str, default="data/interim")
 def main(input_filepath, output_filepath):
-     # logging
+    # logging
     logger = _set_logger(
         f"log/make_dataset/make-dataset-{datetime.today().strftime('%b-%d-%Y')}.log"
     )
@@ -59,6 +61,8 @@ def main(input_filepath, output_filepath):
 
     reviews = json_to_df(review_json)
     metadata = json_to_df(metadata_json)
+    # for `Grocery_and_Gourmet_Food` metadata only due to data inconsistency
+    metadata.rename(columns={"category": "categories"}, inplace=True)
 
     # selecting relevant columns only
     rel_review_cols = ["reviewerID", "asin", "overall", "reviewText"]
@@ -90,5 +94,5 @@ def main(input_filepath, output_filepath):
     products.to_csv(f"{output_filepath}/{CATEGORY}_merged.csv", index=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
