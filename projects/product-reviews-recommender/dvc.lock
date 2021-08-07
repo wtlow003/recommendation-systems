@@ -4,14 +4,14 @@ stages:
     cmd: python3 src/prepare.py
     deps:
     - path: data/raw
-      md5: 22d09fa2ae4a2b24258ae5cbb51e5e6d.dir
-      size: 1718222147
-      nfiles: 7
+      md5: b5d161604a008b413bcc8d9ea1311d10.dir
+      size: 2352080004
+      nfiles: 11
     - path: src/prepare.py
-      md5: bfc139ecb8b13b0c8f583c46cface9c3
-      size: 2859
+      md5: edc654ab6a6fac7acd7e51c9a6ed058e
+      size: 3005
     outs:
     - path: data/interim
-      md5: f13658963ac2144eedabe4c16b814ea7.dir
-      size: 160612174
+      md5: ba1c61cd79d7ac29c28b092a7af1bf25.dir
+      size: 53958298
       nfiles: 1
