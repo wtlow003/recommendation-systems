@@ -93,3 +93,6 @@ data/external
 
 # models
 .models/
+
+# reports
+reports/
