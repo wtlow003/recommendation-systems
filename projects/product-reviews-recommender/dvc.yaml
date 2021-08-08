@@ -6,3 +6,10 @@ stages:
     - src/prepare.py
     outs:
     - data/interim
+  featurize:
+    cmd: python3 src/featurize.py
+    deps:
+    - data/interim
+    - src/featurize.py
+    outs:
+    - data/processed
