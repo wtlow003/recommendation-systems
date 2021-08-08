@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 import contractions
+from gensim.parsing.preprocessing import remove_stopwords
 from gensim.utils import simple_preprocess
 from nltk.corpus import stopwords
 from textblob import TextBlob
@@ -58,7 +59,7 @@ def compute_weighted_ratings(
     return df
 
 
-def removing_missing_reviews(df: pd.DataFrame, review: str) -> pd.DataFrame:
+def remove_missing_reviews(df: pd.DataFrame, review: str) -> pd.DataFrame:
     """[summary]
 
     Args:
@@ -115,8 +116,9 @@ def preprocess_text(review: str) -> str:
     review = re.sub(r"[^a-zA-Z]+", " ", review.lower())
     review = review.lower()
     review = lemmatize_with_postags(review)
+    review = remove_stopwords(review)
     review = simple_preprocess(review, deacc=True)
-    review = [word for word in review if not word in stopwords.words()]
+    # review = [word for word in review if not word in stopwords.words()]
     # save back into a single string for saving purposes
     review = " ".join(review)
 
