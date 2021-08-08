@@ -2,9 +2,9 @@
 
 
 prepare:
-    categories:
-      Grocery_and_Gourmet_Food
+  categories:
+    Grocery_and_Gourmet_Food
 featurize:
-    categories:
-      Clothing_Shoes_and_Jewelry
+  categories:
+    Grocery_and_Gourmet_Food
 
