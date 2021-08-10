@@ -23,8 +23,8 @@ stages:
       size: 53958298
       nfiles: 1
     - path: src/featurize.py
-      md5: 8c734c3f4b59ed8ff8821d449ef45f50
-      size: 2348
+      md5: 9d734e2910965822c0fea3d0a36ac273
+      size: 2304
     outs:
     - path: data/processed
       md5: 3e0aa1db9f8550c284f5a49a2fc2f339.dir
