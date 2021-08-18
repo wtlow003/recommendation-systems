@@ -23,8 +23,8 @@ stages:
       size: 55022306
       nfiles: 1
     - path: src/featurize.py
-      md5: 9d734e2910965822c0fea3d0a36ac273
-      size: 2304
+      md5: 3191ef75aca627551f8e55dbb5758c8c
+      size: 2303
     outs:
     - path: data/processed
       md5: a8dadda091b8812bceacbad78cb8e726.dir
@@ -34,9 +34,9 @@ stages:
     cmd: python3 src/split_train_test.py
     deps:
     - path: data/processed
-      md5: 28775d6e14c01d6970755a24e8a4caf8.dir
-      size: 74968860
-      nfiles: 2
+      md5: a8dadda091b8812bceacbad78cb8e726.dir
+      size: 74962712
+      nfiles: 1
     - path: src/split_train_test.py
       md5: c8d5a7ebd22b88d7a3f0a0baf39f89ad
       size: 2222
