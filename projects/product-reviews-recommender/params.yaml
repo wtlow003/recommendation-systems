@@ -7,4 +7,9 @@ prepare:
 featurize:
   categories:
     Grocery_and_Gourmet_Food
+split_train_test:
+  categories:
+    Grocery_and_Gourmet_Food
+  split_ratio:
+    0.7
 
