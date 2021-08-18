@@ -4,7 +4,7 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def calculate_sparsity(df):
+def calculate_sparsity(df: pd.DataFrame) -> tuple:
     """Calculate the data sparsity based on ratings and reviews.
 
     Args:
@@ -30,7 +30,7 @@ def calculate_sparsity(df):
     return rating_sparsity, review_sparsity
 
 
-def _parse_json(json):
+def _parse_json(json: str) -> dict:
     """Parse json into generator.
 
     Note: Instead of using json.loads(json), `ast.literal_evcal()` is used
@@ -48,11 +48,11 @@ def _parse_json(json):
     """
     with open(json) as f:
         data = f.readlines()
-        for l in tqdm(data):
-            yield ast.literal_eval(l)
+        for line in tqdm(data):
+            yield ast.literal_eval(line)
 
 
-def json_to_df(json):
+def json_to_df(json: dict) -> pd.DataFrame:
     """Parsing json into DataFrame.
 
     Args:
@@ -68,4 +68,3 @@ def json_to_df(json):
         i += 1
 
     return pd.DataFrame.from_dict(df, orient="index")
-

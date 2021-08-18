@@ -16,7 +16,7 @@ from tqdm import tqdm
 def _set_logger(log_path):
     """Setting logger for logging code execution.
 
-    Argss:
+    Args:
         log_path ([str]): eg: "../log/train.log"
 
     Returns:

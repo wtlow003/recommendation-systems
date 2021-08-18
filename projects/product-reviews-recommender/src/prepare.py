@@ -65,7 +65,7 @@ def main(input_filepath, output_filepath):
     metadata.rename(columns={"category": "categories"}, inplace=True)
 
     # selecting relevant columns only
-    rel_review_cols = ["reviewerID", "asin", "overall", "reviewText"]
+    rel_review_cols = ["reviewerID", "asin", "overall", "reviewText", "reviewTime"]
     rel_metadata_cols = ["asin", "title", "categories"]
     reviews = reviews[rel_review_cols]
     metadata = metadata[rel_metadata_cols]
@@ -79,7 +79,15 @@ def main(input_filepath, output_filepath):
     # replace all empty string and drop nan
     products.replace("", np.nan, inplace=True)
     products.dropna(
-        subset=["reviewerID", "asin", "overall", "reviewText", "title", "categories"],
+        subset=[
+            "reviewerID",
+            "asin",
+            "overall",
+            "reviewText",
+            "title",
+            "categories",
+            "reviewTime",
+        ],
         inplace=True,
     )
 
