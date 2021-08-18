@@ -13,3 +13,10 @@ stages:
     - src/featurize.py
     outs:
     - data/processed
+  split_train_test:
+    cmd: python3 src/split_train_test.py
+    deps:
+    - data/processed
+    - src/split_train_test.py
+    outs:
+    - data/evaluation

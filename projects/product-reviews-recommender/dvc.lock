@@ -8,25 +8,40 @@ stages:
       size: 2352080004
       nfiles: 11
     - path: src/prepare.py
-      md5: d709fc5f4e09ce76c13db392debde5e6
-      size: 3007
+      md5: d4f3b09e6fba35ce2ed5f61d2374e319
+      size: 3130
     outs:
     - path: data/interim
-      md5: ba1c61cd79d7ac29c28b092a7af1bf25.dir
-      size: 53958298
+      md5: 105cabd2a54cf37045ac6adbbba262f4.dir
+      size: 55022306
       nfiles: 1
   featurize:
     cmd: python3 src/featurize.py
     deps:
     - path: data/interim
-      md5: ba1c61cd79d7ac29c28b092a7af1bf25.dir
-      size: 53958298
+      md5: 105cabd2a54cf37045ac6adbbba262f4.dir
+      size: 55022306
       nfiles: 1
     - path: src/featurize.py
       md5: 9d734e2910965822c0fea3d0a36ac273
       size: 2304
     outs:
     - path: data/processed
-      md5: 3e0aa1db9f8550c284f5a49a2fc2f339.dir
-      size: 73898730
+      md5: a8dadda091b8812bceacbad78cb8e726.dir
+      size: 74962712
       nfiles: 1
+  split_train_test:
+    cmd: python3 src/split_train_test.py
+    deps:
+    - path: data/processed
+      md5: 28775d6e14c01d6970755a24e8a4caf8.dir
+      size: 74968860
+      nfiles: 2
+    - path: src/split_train_test.py
+      md5: c8d5a7ebd22b88d7a3f0a0baf39f89ad
+      size: 2222
+    outs:
+    - path: data/evaluation
+      md5: a49579652ed7dde0595ccf6c05572e79.dir
+      size: 73594747
+      nfiles: 2
