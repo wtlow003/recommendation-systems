@@ -20,3 +20,10 @@ stages:
     - src/split_train_test.py
     outs:
     - data/evaluation
+  generate_vectors:
+    cmd: python3 src/generate_vectors.py
+    deps:
+    - data/evaluation
+    - src/generate_vectors.py
+    outs:
+    - models/d2v

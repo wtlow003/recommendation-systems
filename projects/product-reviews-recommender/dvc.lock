@@ -38,10 +38,25 @@ stages:
       size: 74962712
       nfiles: 1
     - path: src/split_train_test.py
-      md5: c8d5a7ebd22b88d7a3f0a0baf39f89ad
-      size: 2222
+      md5: 3b34b2ea51bf16a2e62455de09f1706d
+      size: 2221
     outs:
     - path: data/evaluation
       md5: a49579652ed7dde0595ccf6c05572e79.dir
       size: 73594747
       nfiles: 2
+  generate_vectors:
+    cmd: python3 src/generate_vectors.py
+    deps:
+    - path: data/evaluation
+      md5: a49579652ed7dde0595ccf6c05572e79.dir
+      size: 73594747
+      nfiles: 2
+    - path: src/generate_vectors.py
+      md5: e6cbdb32eae7b630fc8078a686d20bfb
+      size: 1592
+    outs:
+    - path: models/d2v
+      md5: 6440b66713b2299544a1ee78aab4f454.dir
+      size: 5649775
+      nfiles: 1
