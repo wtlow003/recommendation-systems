@@ -57,6 +57,6 @@ stages:
       size: 1598
     outs:
     - path: models/d2v
-      md5: 244699534408ca458b0ed041ff7f7809.dir
-      size: 5649774
+      md5: 60fbf74dc579e0dfc929dff268532c9a.dir
+      size: 5649775
       nfiles: 1
