@@ -3,18 +3,18 @@
 
 prepare:
   categories:
-    Grocery_and_Gourmet_Food
+    &a Grocery_and_Gourmet_Food
 featurize:
   categories:
-    Grocery_and_Gourmet_Food
+    *a
 split_train_test:
   categories:
-    Grocery_and_Gourmet_Food
+    *a
   split_ratio:
     0.7
 generate_vectors:
   categories:
-    Grocery_and_Gourmet_Food
+    *a
   d2v_params:
     dm:
       1
