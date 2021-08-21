@@ -12,7 +12,7 @@ import yaml
 @click.command()
 @click.argument("input_filepath", type=str, default="data/evaluation")
 @click.argument("output_filepath", type=str, default="models/d2v")
-def main(input_filepath, output_filepath: str):
+def main(input_filepath: str, output_filepath: str):
 
     # logging
     stream_handler = logging.StreamHandler(sys.stdout)
