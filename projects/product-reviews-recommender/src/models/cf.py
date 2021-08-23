@@ -4,7 +4,80 @@ from gensim.models.doc2vec import Doc2Vec
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from surprise import Dataset, Reader, SVD
 from tqdm import tqdm
+
+
+class FunkMF:
+    """ """
+
+    def __init__(
+        self,
+        n_factors: int = 50,
+        n_epochs: int = 20,
+        biased: bool = True,
+        lr_all: float = 0.005,
+        reg_all: float = 0.02,
+        verbose: bool = True,
+    ):
+        self.algo = SVD(
+            n_factors=n_factors,
+            n_epochs=n_epochs,
+            biased=biased,
+            lr_all=lr_all,
+            reg_all=reg_all,
+            verbose=verbose,
+        )
+        self.data = None
+        self.trainset = None
+        self.testset = None
+
+    def fit(self, train: pd.DataFrame):
+        """Fit the training data to the famous *SVD* algorithm, as popularized by `Simon Funk`,
+        which is also known as the Funk's Matrix Factorization.
+
+        For our project experimentation, we will include biases and regularize the equation with
+        ridge regression (L2) to ensure that we do not overfit the model. This also aligns with
+        the proposed review-initialised Matrix Factorization in class `EmbeddedModCF`.
+
+        This class `FunkMF` is purely build on top of Nicholas Hug's `Surprise` package, which
+        provides various algorithms to implement recommender systems. We leverage on cythonize
+        *SVD* algorithm to increase overall efficiency in training and predicting for over,
+        63 million rows at the minimum for our experimental setup.
+
+        Args:
+            n_factors: The number of latent user/item factors. Default is ``50``.
+            n_epochs: The number of iterations for SGD optimization. Default is ``20``.
+            biased: Whether to use biases. Default is ``True``.
+            lr_all: The learning rate for all parameters. Default is ``.005``.
+            reg_all: The regularization term for L2 regularization. Default is ``.02``.
+            verbose: If ``True``, prints the current epochs. Default is ``True``.
+        """
+
+        # creating reader toDataFramerating scale
+        reader = Reader(rating_scale=(1, 5))
+        # generate data require for surprise
+        data = Dataset.load_from_df(train[["reviewerID", "asin", "overall"]], reader)
+        # generate training set
+        trainset = data.build_full_trainset()
+        # generate test set
+        testset = trainset.build_anti_testset()
+
+        # fitting the trainset to the algorithm SVD (also known as Funk MF)
+        self.algo.fit(trainset)
+
+        self.data = data
+        self.trainset = trainset
+        self.testset = testset
+
+    def predict(self, verbose=False):
+        """Generate candidate items based on previously unrated items.
+
+        Args:
+            verbose: If ``True``, print the current rating prediction for user-item pair.
+                Default is ``False``.
+        """
+        return self.algo.test(self.testset, verbose=verbose)
 
 
 class UserBasedCF:
@@ -123,7 +196,7 @@ class UserBasedCF:
             by=["count", "pred_overall"], ascending=False
         ).index.tolist()
 
-    def fit(self, trainset: pd.DataFrame, k_neighbours: float = 50):
+    def fit(self, train: pd.DataFrame, k_neighbours: float = 50):
         """
 
         Args:
@@ -131,8 +204,8 @@ class UserBasedCF:
             k_neighbours ([int]):
         """
         # generate user rating history
-        self._rating_history = trainset.groupby(["reviewerID"])["asin"].apply(list)
-        self.utility_matrix = self.__get_utility_matrix(trainset)
+        self._rating_history = train.groupby(["reviewerID"])["asin"].apply(list)
+        self.utility_matrix = self.__get_utility_matrix(train)
         self.sim_matrix = self.__get_similarities_matrix()
         self._k_neighbourhood = self.__get_k_neighbourhood(k_neighbours)
 
