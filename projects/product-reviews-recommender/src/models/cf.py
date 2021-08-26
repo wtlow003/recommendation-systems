@@ -1,12 +1,30 @@
+from abc import ABC, abstractmethod
 from collections import Counter
 
-from gensim.models.doc2vec import Doc2Vec
 import numpy as np
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
 import surprise
-from surprise import Dataset, Reader, SVD
+from gensim.models.doc2vec import Doc2Vec
+from sklearn.metrics.pairwise import cosine_similarity
+from surprise import SVD, Dataset, Reader
 from tqdm import tqdm
+
+
+class RecommenderBase(ABC):
+    """ """
+
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def fit(self):
+        """Fit learning algorithm to train set."""
+        pass
+
+    @abstractmethod
+    def test(self):
+        """Generate candidate items based on test set."""
+        pass
 
 
 class PreInitialisedMF(surprise.AlgoBase):
@@ -148,7 +166,7 @@ class PreInitialisedMF(surprise.AlgoBase):
         return est
 
 
-class FunkMF:
+class FunkMF(RecommenderBase):
     """This class `FunkMF` is purely build on top of Nicholas Hug's `Surprise` package, which
     provides various algorithms to implement recommender systems. We leverage on cythonize
     *SVD* algorithm to increase overall efficiency in training and predicting for over,
@@ -219,7 +237,7 @@ class FunkMF:
         return self.algo.test(testset, verbose=verbose)
 
 
-class UserBasedCF:
+class UserBasedCF(RecommenderBase):
     """ """
 
     def __init__(self):
@@ -361,7 +379,7 @@ class UserBasedCF:
         self.sim_matrix = self.__get_similarities_matrix()
         self._k_neighbourhood = self.__get_k_neighbourhood(k_neighbours)
 
-    def predict(self):
+    def test(self):
         """ """
         # retrieve unique users
         unique_users = self._rating_history.reset_index()["reviewerID"].tolist()
@@ -373,7 +391,7 @@ class UserBasedCF:
         return predictions
 
 
-class EmbeddedItemBasedCF:
+class EmbeddedItemBasedCF(RecommenderBase):
     """ """
 
     def __init__(self, d2v: Doc2Vec):
@@ -414,7 +432,7 @@ class EmbeddedItemBasedCF:
         self.user_rating_history = user_rating_history
         self.user_embeddings = user_embeddings
 
-    def predict(self, n: int = 200) -> dict:
+    def test(self, n: int = 200) -> dict:
         """Generate a list of n-number of candidates items.
 
         This only generates a generic candidate list of items which do not factor
