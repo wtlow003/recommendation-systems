@@ -12,51 +12,51 @@ stages:
       size: 3130
     outs:
     - path: data/interim
-      md5: 105cabd2a54cf37045ac6adbbba262f4.dir
-      size: 55022306
+      md5: e0740d3aa1616d824bcf49d706e4f0d6.dir
+      size: 164426055
       nfiles: 1
   featurize:
     cmd: python3 src/featurize.py
     deps:
     - path: data/interim
-      md5: 105cabd2a54cf37045ac6adbbba262f4.dir
-      size: 55022306
+      md5: e0740d3aa1616d824bcf49d706e4f0d6.dir
+      size: 164426055
       nfiles: 1
     - path: src/featurize.py
       md5: 3191ef75aca627551f8e55dbb5758c8c
       size: 2303
     outs:
     - path: data/processed
-      md5: a8dadda091b8812bceacbad78cb8e726.dir
-      size: 74962712
+      md5: 89e03361eda1e93d236321d3c66f8ed8.dir
+      size: 205758515
       nfiles: 1
   split_train_test:
     cmd: python3 src/split_train_test.py
     deps:
     - path: data/processed
-      md5: a8dadda091b8812bceacbad78cb8e726.dir
-      size: 74962712
+      md5: 89e03361eda1e93d236321d3c66f8ed8.dir
+      size: 205758515
       nfiles: 1
     - path: src/split_train_test.py
       md5: 3b34b2ea51bf16a2e62455de09f1706d
       size: 2221
     outs:
     - path: data/evaluation
-      md5: a49579652ed7dde0595ccf6c05572e79.dir
-      size: 73594747
+      md5: b3b4f37f02e9173ee1f2732ce69e8382.dir
+      size: 205061216
       nfiles: 2
   generate_vectors:
     cmd: python3 src/generate_vectors.py
     deps:
     - path: data/evaluation
-      md5: a49579652ed7dde0595ccf6c05572e79.dir
-      size: 73594747
+      md5: b3b4f37f02e9173ee1f2732ce69e8382.dir
+      size: 205061216
       nfiles: 2
     - path: src/generate_vectors.py
       md5: af98639a023a5eeaf9fce1ce18c329d8
       size: 1598
     outs:
     - path: models/d2v
-      md5: 60fbf74dc579e0dfc929dff268532c9a.dir
-      size: 5649775
+      md5: 0bed8ccd3a35b352cf8883a8d1ba48fa.dir
+      size: 11382148
       nfiles: 1
