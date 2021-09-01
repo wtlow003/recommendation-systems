@@ -3,10 +3,9 @@ from collections import Counter
 
 import numpy as np
 import pandas as pd
-import surprise
 from gensim.models.doc2vec import Doc2Vec
 from sklearn.metrics.pairwise import cosine_similarity
-from surprise import SVD, Dataset, Reader
+from surprise import SVD, AlgoBase, Dataset, Reader
 from tqdm import tqdm
 
 
@@ -27,7 +26,7 @@ class RecommenderBase(ABC):
         pass
 
 
-class PreInitialisedMF(surprise.AlgoBase):
+class PreInitialisedMF(AlgoBase):
     """Latent factors of users and items are initialized with fix embedding vectors.
     This in turns, allows us to create `P` and `Q` without needing random initialization.
 
@@ -68,7 +67,7 @@ class PreInitialisedMF(surprise.AlgoBase):
         num_epochs: int = 10,
         num_factors: int = 50,
     ):
-        surprise.AlgoBase.__init__(self)
+        AlgoBase.__init__(self)
 
         self.user_map = {v: k for k, v in user_map.items()}
         self.item_map = {v: k for k, v in item_map.items()}
@@ -92,7 +91,7 @@ class PreInitialisedMF(surprise.AlgoBase):
                 a training set used for Surprise's classes.
         """
 
-        surprise.AlgoBase.fit(self, train)
+        AlgoBase.fit(self, train)
 
         P = self.user_embedding
         Q = self.item_embedding
@@ -172,6 +171,17 @@ class FunkMF(RecommenderBase):
     *SVD* algorithm to increase overall efficiency in training and predicting for over,
     63 million rows at the minimum for our experimental setup.
 
+    Usage:
+        To instantiate the FunkMF object:
+        >>> funk_mf = FunkMF()
+
+        To fit model to the training data (e.g., Surprise's trainset):
+        >>> funk_mf.fit(trainset, verbose=True)
+
+        To generate rating predictions for all unseen user-item interactions:
+        >>> testset = trainset.build_anti_testset()
+        >>> predictions = funk_mf.test(testset, verbose=False)
+
     Args:
         n_factors: The number of latent user/item factors. Default is ``50``.
         n_epochs: The number of iterations for SGD optimization. Default is ``10``.
@@ -238,7 +248,12 @@ class FunkMF(RecommenderBase):
 
 
 class UserBasedCF(RecommenderBase):
-    """ """
+    """
+    Usage:
+
+    Args:
+
+    """
 
     def __init__(self):
         self._rating_history = None
@@ -392,7 +407,13 @@ class UserBasedCF(RecommenderBase):
 
 
 class EmbeddedItemBasedCF(RecommenderBase):
-    """ """
+    """
+
+    Usage:
+
+    Args:
+
+    """
 
     def __init__(self, d2v: Doc2Vec):
         self.d2v = d2v
