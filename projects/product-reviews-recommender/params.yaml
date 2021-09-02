@@ -3,7 +3,7 @@
 
 prepare:
   categories:
-    &a Grocery_and_Gourmet_Food
+    &a Clothing_Shoes_and_Jewelry
 featurize:
   categories:
     *a
@@ -32,4 +32,3 @@ generate_vectors:
       8
     epochs:
       50
-
