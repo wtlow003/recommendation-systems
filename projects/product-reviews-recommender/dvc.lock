@@ -4,59 +4,59 @@ stages:
     cmd: python3 src/prepare.py
     deps:
     - path: data/raw
-      md5: b5d161604a008b413bcc8d9ea1311d10.dir
-      size: 2352080004
-      nfiles: 11
+      md5: 3f45b10f6050ee39f1bcc17060cddad9.dir
+      size: 5700773700
+      nfiles: 15
     - path: src/prepare.py
       md5: d4f3b09e6fba35ce2ed5f61d2374e319
       size: 3130
     outs:
     - path: data/interim
-      md5: e0740d3aa1616d824bcf49d706e4f0d6.dir
-      size: 164426055
+      md5: d2157f2ee3fcb92f4dc4cd62d16c4d2b.dir
+      size: 69853870
       nfiles: 1
   featurize:
     cmd: python3 src/featurize.py
     deps:
     - path: data/interim
-      md5: e0740d3aa1616d824bcf49d706e4f0d6.dir
-      size: 164426055
+      md5: d2157f2ee3fcb92f4dc4cd62d16c4d2b.dir
+      size: 69853870
       nfiles: 1
     - path: src/featurize.py
       md5: 3191ef75aca627551f8e55dbb5758c8c
       size: 2303
     outs:
     - path: data/processed
-      md5: 89e03361eda1e93d236321d3c66f8ed8.dir
-      size: 205758515
+      md5: 0f624b3b0e676e0cb95195a4d0cb404f.dir
+      size: 93475650
       nfiles: 1
   split_train_test:
     cmd: python3 src/split_train_test.py
     deps:
     - path: data/processed
-      md5: 89e03361eda1e93d236321d3c66f8ed8.dir
-      size: 205758515
+      md5: 0f624b3b0e676e0cb95195a4d0cb404f.dir
+      size: 93475650
       nfiles: 1
     - path: src/split_train_test.py
       md5: 3b34b2ea51bf16a2e62455de09f1706d
       size: 2221
     outs:
     - path: data/evaluation
-      md5: b3b4f37f02e9173ee1f2732ce69e8382.dir
-      size: 205061216
+      md5: 8920f102f7a39297b11eba26135d45d6.dir
+      size: 92834842
       nfiles: 2
   generate_vectors:
     cmd: python3 src/generate_vectors.py
     deps:
     - path: data/evaluation
-      md5: b3b4f37f02e9173ee1f2732ce69e8382.dir
-      size: 205061216
+      md5: 8920f102f7a39297b11eba26135d45d6.dir
+      size: 92834842
       nfiles: 2
     - path: src/generate_vectors.py
       md5: af98639a023a5eeaf9fce1ce18c329d8
       size: 1598
     outs:
     - path: models/d2v
-      md5: 0bed8ccd3a35b352cf8883a8d1ba48fa.dir
-      size: 11382148
+      md5: 7248a8044e983f9f45c4f653ba57f965.dir
+      size: 6412960
       nfiles: 1
