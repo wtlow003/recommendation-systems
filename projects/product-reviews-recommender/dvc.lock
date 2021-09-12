@@ -4,8 +4,8 @@ stages:
     cmd: python3 src/prepare.py
     deps:
     - path: data/raw
-      md5: 3f45b10f6050ee39f1bcc17060cddad9.dir
-      size: 5700773700
+      md5: adf8e41174e7963d8b66afa724bedce9.dir
+      size: 5138162521
       nfiles: 15
     - path: src/prepare.py
       md5: d4f3b09e6fba35ce2ed5f61d2374e319
@@ -53,10 +53,10 @@ stages:
       size: 92834842
       nfiles: 2
     - path: src/generate_vectors.py
-      md5: af98639a023a5eeaf9fce1ce18c329d8
-      size: 1598
+      md5: 62bb0ec5ad84f5aa40666d8f8ff35dd2
+      size: 2581
     outs:
     - path: models/d2v
-      md5: 7248a8044e983f9f45c4f653ba57f965.dir
-      size: 6412960
-      nfiles: 1
+      md5: cbf1dbd74863941029fe61240852574c.dir
+      size: 37470043
+      nfiles: 2
