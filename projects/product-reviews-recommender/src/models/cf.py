@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from collections import Counter
+from collections import Counter, defaultdict
 
 import numpy as np
 import pandas as pd
@@ -23,6 +23,11 @@ class RecommenderBase(ABC):
     @abstractmethod
     def test(self):
         """Generate candidate items based on test set."""
+        pass
+
+    @abstractmethod
+    def get_top_n(self):
+        """Return Top-N recommendations."""
         pass
 
 
@@ -164,6 +169,29 @@ class PreInitialisedMF(AlgoBase):
 
         return est
 
+    def get_top_n(self, predictions: dict, n: int = 10):
+        """Return the top-N recommendation for each user from a set of predictions.
+
+        Args:
+            n ([int]): Number of recommended items. Defaults to ``10``.
+
+        Returns:
+            ([dict]): Dictionary of Top-N recommendations for each unique user,
+                sorted by ratin prediction.
+        """
+
+        # First map the predictions to each user.
+        top_ns = defaultdict(list)
+        for uid, iid, _, est, _ in predictions:
+            top_ns[uid].append((iid, est))
+
+        # Then sort the predictions for each user and retrieve the k highest ones.
+        for uid, user_ratings in top_ns.items():
+            user_ratings.sort(key=lambda x: x[1], reverse=True)
+            top_ns[uid] = user_ratings[:n]
+
+        return top_ns
+
 
 class FunkMF(RecommenderBase):
     """This class `FunkMF` is purely build on top of Nicholas Hug's `Surprise` package, which
@@ -210,6 +238,7 @@ class FunkMF(RecommenderBase):
         )
         self.data = None
         self.trainset = None
+        self.predictions = None
 
     def fit(self, train: pd.DataFrame):
         """Fit the training data to the famous *SVD* algorithm, as popularized by `Simon Funk`,
@@ -223,7 +252,7 @@ class FunkMF(RecommenderBase):
             train ([pd.Dataframe]): Training dataset.
         """
 
-        # creating reader toDataFramerating scale
+        # creating reader based on DataFrame rating scale
         reader = Reader(rating_scale=(1, 5))
         # generate data require for surprise
         data = Dataset.load_from_df(train[["reviewerID", "asin", "overall"]], reader)
@@ -244,7 +273,32 @@ class FunkMF(RecommenderBase):
                 Default is ``False``.
         """
 
-        return self.algo.test(testset, verbose=verbose)
+        self.predictions = self.algo.test(testset, verbose=verbose)
+
+        return self.predictions
+
+    def get_top_n(self, n: int = 10):
+        """Return the top-N recommendation for each user from a set of predictions.
+
+        Args:
+            n ([int]): Number of recommended items. Defaults to ``10``.
+
+        Returns:
+            ([dict]): Dictionary of Top-N recommendations for each unique user,
+                sorted by ratin prediction.
+        """
+
+        # First map the predictions to each user.
+        top_ns = defaultdict(list)
+        for uid, iid, _, est, _ in self.predictions:
+            top_ns[uid].append((iid, est))
+
+        # Then sort the predictions for each user and retrieve the k highest ones.
+        for uid, user_ratings in top_ns.items():
+            user_ratings.sort(key=lambda x: x[1], reverse=True)
+            top_ns[uid] = user_ratings[:n]
+
+        return top_ns
 
 
 class UserBasedCF(RecommenderBase):
@@ -256,6 +310,7 @@ class UserBasedCF(RecommenderBase):
         self._k_neighbourhood = None
         self.utility_matrix = None
         self.sim_matrix = None
+        self.predictions = None
 
     def __get_utility_matrix(self, trainset: pd.DataFrame):
         """ """
@@ -364,20 +419,26 @@ class UserBasedCF(RecommenderBase):
         ).index.tolist()
 
     def fit(self, trainset: pd.DataFrame, k_neighbours: float = 50):
-        """
+        """Fit the learning algorithm to the training dataset.
+
+        Computes user-item rating matrix, user similarities and defined k-neighbourhood.
 
         Args:
-            trainset ([pd.DataFrame]):
-            k_neighbours ([int]):
+            trainset ([pd.DataFrame]): Training Dataset.
+            k_neighbours ([int]): Number of similar users in a defined neighbourhood.
         """
         # generate user rating history
+        print("Generating user rating history...")
         self._rating_history = trainset.groupby(["reviewerID"])["asin"].apply(list)
+        print("Generating user-rating item rating (utility) matrix...")
         self.utility_matrix = self.__get_utility_matrix(trainset)
+        print("Generate user similarities matrix...")
         self.sim_matrix = self.__get_similarities_matrix()
+        print("Generate k-neighbourhood of similar users...")
         self._k_neighbourhood = self.__get_k_neighbourhood(k_neighbours)
 
     def test(self):
-        """ """
+        """Generate candidates items based on cosine similarity, sorted in descending order."""
         # retrieve unique users
         unique_users = self._rating_history.reset_index()["reviewerID"].tolist()
 
@@ -385,15 +446,52 @@ class UserBasedCF(RecommenderBase):
         for user in tqdm(unique_users):
             predictions[user] = self.__predict_rating(user)
 
+        self.predictions = predictions
+
         return predictions
 
+    def get_top_n(self, n: int = 10) -> dict:
+        """Return Top-N recommendations for each user based on predicted ratings.
 
-class EmbeddedItemBasedCF(RecommenderBase):
-    """
+        Args:
+            n ([int]): Number of recommended items. Defaults to ``10``.
+
+        Returns:
+            ([dict]): Dictionary of Top-N recommendations for each unique user, sorted by cosine similariy.
+        """
+
+        # retrieve Top-N from candidate items predicted
+        top_ns = {}
+        for user in self.predictions:
+            top_ns[user] = self.predictions[user][:n]
+
+        return top_ns
+
+
+class EmbeddedReviewCBF(RecommenderBase):
+    """Recommender System algorithm based on principles of ``Content-based Filtering``,
+    also known as ``Embedded Review Content-based Filtering`` (ER-CBF).
+
+    Without need the of pre-defined item descriptions or features, we extract relevant features
+    from product reviews to represent each item as a whole. Using the principle of ``Content-based Filtering``,
+    we construct the a user representation as a mean aggregation of all purchased items (similar to mixture of items).
+
+    Using the user representation, we able to represent each user into the item dimension vector space, to compute
+    cosine similarities between each user and previously unrated items based on the vectors generated via Paragraph
+    Vector model (Doc2Vec, refer to ``gensim`` for implementation).
 
     Usage:
+        To instantiate the EmbeddedReviewCBF object:
+        >>> er_cbf = EmbeddedReviewCBF()
+
+        To fit model to the training data:
+        >>> er_cbf.fit(train, dimension=50)
+
+        To generate rating predictions for all unseen user-item interactions (candidate items):
+        >>> predictions = er_cbf.test(n=200)
 
     Args:
+        d2v ([Doc2Vec]): Paragraph Vector model (gensim ``Doc2Vec``).
 
     """
 
@@ -401,6 +499,7 @@ class EmbeddedItemBasedCF(RecommenderBase):
         self.d2v = d2v
         self.user_rating_history = None
         self.user_embeddings = None
+        self.predictions = None
 
     def fit(self, train: pd.DataFrame, dimension: int = 50):
         """Fit learning algorithm to the training set and generate
@@ -454,4 +553,37 @@ class EmbeddedItemBasedCF(RecommenderBase):
                 i for i in self.d2v.dv.most_similar([user[1]], topn=n)
             ]
 
+        self.predictions = candidate_items
+
         return candidate_items
+
+    def get_top_n(self, n: int = 10) -> dict:
+        """Return Top-N recommendations for each user based on cosine similarity.
+
+        Args:
+            n ([int]): Number of recommended items. Defaults to ``10``.
+
+        Returns:
+            ([dict]): Dictionary of top-N recommendations for each unique user, sorted by
+                cosine similarties.
+        """
+
+        # retrieve a 200 items candidate list based on similarities
+        top_ns = {}
+        for user in self.predictions:
+            rated_items = self.user_rating_history[user]
+            candidate_items = [i[0] for i in self.predictions[user]]
+            unrated_items = set(candidate_items) - set(rated_items)
+
+            user_top_n = []
+            idx = 0
+            while len(user_top_n) < n:
+                if candidate_items[idx] in unrated_items:
+                    user_top_n.append(candidate_items[idx])
+                    idx += 1
+                else:
+                    idx += 1
+
+            top_ns[user] = user_top_n
+
+        return top_ns
