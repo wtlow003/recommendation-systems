@@ -2,12 +2,15 @@ import gensim
 
 
 class LDA:
-    def __init__(self, reviews):
+    def __init__(self, reviews, n_topics=50, n_epochs=20, workers=8):
         self.reviews = reviews
+        self.n_topics = n_topics
+        self.n_epochs = n_epochs
+        self.workers = workers
         self.lda = None
         self.dictionary = None
 
-    def train(self, n_topics=50, n_epochs=20, workers=8):
+    def train(self):
         # tokenizations
         dictionary = gensim.corpora.Dictionary(self.reviews)
         # filtering tokens less than 5 reviews, more than 0.85 reviews
@@ -18,10 +21,10 @@ class LDA:
         # train model
         self.lda = gensim.models.LdaMulticore(
             bow_corpus,
-            num_topics=n_topics,
+            num_topics=self.n_topics,
             id2word=dictionary,
-            passes=n_epochs,
-            workers=workers,
+            passes=self.n_epochs,
+            workers=self.workers,
         )
         # save dictionary
         self.dictionary = dictionary
