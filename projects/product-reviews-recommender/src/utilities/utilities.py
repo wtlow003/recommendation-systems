@@ -290,12 +290,22 @@ def generate_recommendations_df(
 ):
     """ """
 
-    top_ns = n_recommendations[max_recommended][0]
-    top_ns_df = pd.DataFrame.from_dict(top_ns).T.reset_index()
-    # transform column data to row wise
-    top_ns_df = top_ns_df.melt(
-        id_vars="index", var_name="item_rank", value_name="recommended_items"
-    ).sort_values(by=["index", "item_rank"])
+    try:
+        top_ns = n_recommendations[max_recommended][0]
+        top_ns_df = pd.DataFrame.from_dict(top_ns).T.reset_index()
+        # transform column data to row wise
+        top_ns_df = top_ns_df.melt(
+            id_vars="index", var_name="item_rank", value_name="recommended_items"
+        ).sort_values(by=["index", "item_rank"])
+    except ValueError:
+        top_ns = n_recommendations[max_recommended][0]
+        top_ns_df = (
+            pd.DataFrame.from_dict(n_recommendations[45][0], orient="index")
+            .stack()
+            .to_frame()
+            .reset_index()
+        )
+
     # rename columns
     top_ns_df.columns = ["reviewerID", "item_rank", "asin"]
     # add the in columns specifying top-n and algorithm
