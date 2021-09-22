@@ -3,6 +3,7 @@ import os
 import sys
 
 import click
+import numpy as np
 import pandas as pd
 import yaml
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
@@ -13,6 +14,10 @@ from tqdm import tqdm
 @click.argument("input_filepath", type=str, default="data/evaluation")
 @click.argument("output_filepath", type=str, default="models/d2v")
 def main(input_filepath: str, output_filepath: str):
+
+    # set seed for reproducibility
+    SEED = 42
+    np.random.seed(SEED)
 
     # logging
     stream_handler = logging.StreamHandler(sys.stdout)
