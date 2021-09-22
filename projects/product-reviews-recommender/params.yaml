@@ -3,7 +3,7 @@
 
 prepare:
   categories:
-    &a Clothing_Shoes_and_Jewelry
+    &a Grocery_and_Gourmet_Food
 featurize:
   categories:
     *a
@@ -21,7 +21,7 @@ generate_vectors:
     vector_size:
       50
     min_count:
-      5
+      1
     negative:
       5
     ns_exponent:
@@ -31,4 +31,4 @@ generate_vectors:
     workers:
       8
     epochs:
-      50
+      10
