@@ -2,11 +2,12 @@ import gensim
 
 
 class LDA:
-    def __init__(self, reviews, n_topics=50, n_epochs=20, workers=8):
+    def __init__(self, reviews, n_topics=50, n_epochs=10, workers=8, random_state=42):
         self.reviews = reviews
         self.n_topics = n_topics
         self.n_epochs = n_epochs
         self.workers = workers
+        self.random_state = random_state
         self.lda = None
         self.dictionary = None
 
@@ -25,6 +26,7 @@ class LDA:
             id2word=dictionary,
             passes=self.n_epochs,
             workers=self.workers,
+            random_state=self.random_state,
         )
         # save dictionary
         self.dictionary = dictionary
