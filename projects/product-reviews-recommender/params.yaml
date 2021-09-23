@@ -3,7 +3,7 @@
 
 prepare:
   categories:
-    &a Grocery_and_Gourmet_Food
+    &a Pet_Supplies
 featurize:
   categories:
     *a
