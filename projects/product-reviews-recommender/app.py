@@ -13,10 +13,6 @@ def main():
 
     conn = create_engine("sqlite:///recommender.db", echo=False)
 
-    # receive `reviewerID` to get recommendations
-    st.subheader("Enter Reviewer ID:")
-    st.text_input("", key="reviewerID")
-
     # select category
     st.subheader("Select Category for Recommendations:")
     category_option = st.selectbox("", ("Grocery and Gourmet Food", "Pet Supplies"))
@@ -24,12 +20,16 @@ def main():
     # load data
     CATEGORY = "_".join(category_option.split(" "))
     DATA = pd.read_csv(f"{DATA_PATH}/{CATEGORY}_train.csv")
+    USERS = tuple(DATA["reviewerID"].to_list())
+
+    st.subheader("Select User for Recommendations:")
+    user_option = st.selectbox("", USERS)
 
     # select algorithm for recommendations
     st.subheader("Select Algorithm for Recommendations:")
     algo_option = st.selectbox(
         "",
-        ("UB-CF", "RANDOM", "ER-CBF", "FUNK-SVD", "MOD-ECF"),
+        ("UB-CF", "RANDOM", "ER-CBF", "FUNK-SVD", "MOD-ECF", "TI-MF"),
     )
 
     # top-n items for recommendations
@@ -39,18 +39,16 @@ def main():
     st.write(" ")
 
     with st.container():
-        st.header("Generating Recommendations:")
-        st.subheader(f"{st.session_state.reviewerID}'s Past Purchase History")
+        st.header(f"Generating Recommendations For `{user_option}`:")
+        st.subheader("Past Purchase History")
         with st.spinner("Identifying past items"):
-            purchase_history = DATA[DATA["reviewerID"] == st.session_state.reviewerID]
+            purchase_history = DATA[DATA["reviewerID"] == user_option]
             st.table(purchase_history[["asin", "title"]])
-            st.subheader(
-                f"{st.session_state.reviewerID} Top-{n_option} Recommended Items:"
-            )
+            st.subheader(f"Top-{n_option} Recommended Items:")
             n_recommended = pd.read_sql(
                 f"""SELECT *
                     FROM {CATEGORY}
-                    WHERE reviewerID = '{st.session_state.reviewerID}'
+                    WHERE reviewerID = '{user_option}'
                         AND algorithm = '{algo_option}'
                     ORDER BY item_rank
                     LIMIT {n_option}
