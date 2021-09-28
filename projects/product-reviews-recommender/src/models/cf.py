@@ -418,7 +418,7 @@ class UserBasedCF(RecommenderBase):
             by=["count", "pred_overall"], ascending=False
         ).index.tolist()
 
-    def fit(self, trainset: pd.DataFrame, k_neighbours: float = 50):
+    def fit(self, trainset: pd.DataFrame, k_neighbours: float = 50, random_state=42):
         """Fit the learning algorithm to the training dataset.
 
         Computes user-item rating matrix, user similarities and defined k-neighbourhood.
@@ -427,6 +427,9 @@ class UserBasedCF(RecommenderBase):
             trainset ([pd.DataFrame]): Training Dataset.
             k_neighbours ([int]): Number of similar users in a defined neighbourhood.
         """
+        # set seed
+        np.random.seed(random_state)
+
         # generate user rating history
         print("Generating user rating history...")
         self._rating_history = trainset.groupby(["reviewerID"])["asin"].apply(list)
