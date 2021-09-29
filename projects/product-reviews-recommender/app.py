@@ -14,27 +14,29 @@ def main():
     conn = create_engine("sqlite:///recommender.db", echo=False)
 
     # select category
-    st.subheader("Select Category for Recommendations:")
-    category_option = st.selectbox("", ("Grocery and Gourmet Food", "Pet Supplies"))
+    st.sidebar.subheader("Select Category for Recommendations:")
+    category_option = st.sidebar.selectbox(
+        "", ("Grocery and Gourmet Food", "Pet Supplies")
+    )
 
     # load data
     CATEGORY = "_".join(category_option.split(" "))
     DATA = pd.read_csv(f"{DATA_PATH}/{CATEGORY}_train.csv")
     USERS = tuple(DATA["reviewerID"].to_list())
 
-    st.subheader("Select User for Recommendations:")
-    user_option = st.selectbox("", USERS)
+    st.sidebar.subheader("Select User for Recommendations:")
+    user_option = st.sidebar.selectbox("", USERS)
 
     # select algorithm for recommendations
-    st.subheader("Select Algorithm for Recommendations:")
-    algo_option = st.selectbox(
+    st.sidebar.subheader("Select Algorithm for Recommendations:")
+    algo_option = st.sidebar.selectbox(
         "",
         ("UB-CF", "RANDOM", "ER-CBF", "FUNK-SVD", "MOD-ECF", "TI-MF"),
     )
 
     # top-n items for recommendations
-    st.subheader("Select N-items Recommended:")
-    n_option = st.selectbox("", (10, 25, 30, 45))
+    st.sidebar.subheader("Select N-items Recommended:")
+    n_option = st.sidebar.selectbox("", (10, 25, 30, 45))
 
     st.write(" ")
 
