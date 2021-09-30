@@ -3,3 +3,4 @@
 /data/processed/
 /data/interim/
 /data/saved_data/
+*.ipynb
