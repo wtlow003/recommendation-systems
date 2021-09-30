@@ -1,0 +1,5 @@
+# removing unnecessary materials for streamlit
+/models
+/data/processed/
+/data/interim/
+/data/saved_data
