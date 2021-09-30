@@ -21,7 +21,6 @@ class LDA:
     def train(self):
         # tokenizations
         dictionary = gensim.corpora.Dictionary(self.reviews)
-        dictionary.save("corpus_dictionary")
         # filtering tokens less than 5 reviews, more than 0.85 reviews
         dictionary.filter_extremes(no_below=5, no_above=0.85)
         # creating dict how many words and time it appears
