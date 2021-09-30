@@ -11,7 +11,7 @@ def main():
         "Leveraging Unsupervised Representation Learning with Reviews for Top-N Recommendations in E-commerce"
     )
 
-    conn = create_engine("sqlite:///recommender.db", echo=False)
+    conn = create_engine("sqlite:///recommender_demo.db", echo=False)
 
     # select category
     st.sidebar.subheader("Select Category for Recommendations:")
@@ -22,7 +22,8 @@ def main():
     # load data
     CATEGORY = "_".join(category_option.split(" "))
     DATA = pd.read_csv(f"{DATA_PATH}/{CATEGORY}_train.csv")
-    USERS = tuple(DATA["reviewerID"].to_list())
+    DB_DATA = pd.read_sql(f"SELECT DISTINCT reviewerID FROM {CATEGORY}", con=conn)
+    USERS = tuple(DB_DATA.reviewerID.tolist())
 
     st.sidebar.subheader("Select User for Recommendations:")
     user_option = st.sidebar.selectbox("", USERS)
