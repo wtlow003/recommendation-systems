@@ -96,21 +96,28 @@ class PreInitialisedMF(AlgoBase):
                 a training set used for Surprise's classes.
         """
 
-        AlgoBase.fit(self, train)
+        # create reader based on DataFrame raitng scale
+        reader = Reader(rating_scale=(1, 5))
+        # generate data required for surprise
+        data = Dataset.load_from_df(train[["reviewerID", "asin", "overall"]], reader)
+        # generate training set
+        trainset = data.build_full_trainset()
+
+        AlgoBase.fit(self, trainset)
 
         P = self.user_embedding
         Q = self.item_embedding
         bias_u = np.zeros(len(self.user_embedding))
         bias_i = np.zeros(len(self.item_embedding))
-        bias_global = train.global_mean
+        bias_global = trainset.global_mean
 
         for current_epoch in range(self.num_epochs):
             if verbose:
                 print(f"Processing epoch {current_epoch}")
-            for u, i, r_ui in train.all_ratings():
+            for u, i, r_ui in trainset.all_ratings():
                 # retrieving raw uid, iid from iid
-                raw_uid = train.to_raw_uid(u)
-                raw_iid = train.to_raw_iid(i)
+                raw_uid = trainset.to_raw_uid(u)
+                raw_iid = trainset.to_raw_iid(i)
 
                 # locating the index of the user/item vector
                 ui = self.user_map[raw_uid]
@@ -135,7 +142,7 @@ class PreInitialisedMF(AlgoBase):
         self.Q = Q
         self.bias_u = bias_u
         self.bias_i = bias_i
-        self.trainset = train
+        self.trainset = trainset
 
     def estimate(self, u, i, clip=True):
         """Returns estimated rating for user u, and item i.

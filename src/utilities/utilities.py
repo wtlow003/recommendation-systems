@@ -170,14 +170,14 @@ def get_topic_vectors(model, corpus: list, n_topics: int = 50) -> list:
         n_topics ([int]): Fixed number of topics per review. Default is ``50``.
     """
     topic_vecs = []
-    for i in tqdm(range(len(corpus))):
+    for i in range(len(corpus)):
         top_topics = model.get_document_topics(corpus[i])
         topic_vecs.append([top_topics[i][1] for i in range(n_topics)])
 
     return topic_vecs
 
 
-def generate_user_item_vectors(lda, train: pd.DataFrame) -> tuple:
+def generate_user_item_vectors(train: pd.DataFrame, lda) -> tuple:
     """Generate user and item vectors and relevant mapping to initialize Matrix Factorization.
 
     Args:
