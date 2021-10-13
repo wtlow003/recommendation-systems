@@ -101,7 +101,7 @@ pathspec==0.8.1
 pexpect==4.8.0
 phonenumbers==8.12.29
 pickleshare==0.7.5
-Pillow==8.3.1
+Pillow==8.3.2
 platformdirs==2.2.0
 ply==3.11
 pre-commit==2.14.0
