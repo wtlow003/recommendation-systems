@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
 from collections import Counter, defaultdict
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 from gensim.models.doc2vec import Doc2Vec
 from sklearn.metrics.pairwise import cosine_similarity
-from surprise import SVD, AlgoBase, Dataset, Reader
+from surprise import AlgoBase, Dataset, Reader
+from surprise.prediction_algorithms.matrix_factorization import SVD
 from tqdm import tqdm
 
 
@@ -41,13 +43,17 @@ class PreInitialisedMF(AlgoBase):
     Usage:
         To instantiate the PreInitialisedMF object:
         >>> ti_mf = PreInitialisedMF()
+        >>> mod_ecf = PreInitialisedMF()
 
         To fit model to the training data (e.g., Surprise's trainset):
-        >>> ti_mf.fit(trainset, verbose=True)
+        >>> ti_mf.fit(train, verbose=True)
+        >>> mod_ecf.fit(train, verbose=True)
 
         To generate rating predictions for all unseen user-item interactions:
-        >>> testset = trainset.build_anti_testset()
-        >>> predictions = ti_mf.test(testset, verbose=False)
+        >>> ti_testset = ti_mf.trainset.build_anti_testset()
+        >>> mod_testset = mod_ecf.trainset.build_anti_testset()
+        >>> ti_predictions = ti_mf.test(ti_testset, verbose=False)
+        >>> mod_predicitons = mod_ecf.test(mod_testset, verbose=False)
 
     Args:
         user_map ([dict]): Index-User mapping, e.g., {index: User}.
@@ -144,14 +150,14 @@ class PreInitialisedMF(AlgoBase):
         self.bias_i = bias_i
         self.trainset = trainset
 
-    def estimate(self, u, i, clip=True):
+    def estimate(self, u: int, i: int, clip: bool = True) -> float:
         """Returns estimated rating for user u, and item i.
 
         Prerequisite: Algorithm must be fit to training set.
 
         Args:
-            u ([type]): The (inner) user id.
-            i ([type]): The (inner) item id.
+            u ([int]): The (inner) user id.
+            i ([int]): The (inner) item id.
             clip (bool, optional): Clip ratings to minimum and maximum of ``trainset``'s rating
                 scale. Defaults to ``True``.
         """
@@ -176,7 +182,7 @@ class PreInitialisedMF(AlgoBase):
 
         return est
 
-    def get_top_n(self, predictions: dict, n: int = 10):
+    def get_top_n(self, predictions: dict, n: int = 10) -> dict:
         """Return the top-N recommendation for each user from a set of predictions.
 
         Args:
@@ -218,12 +224,12 @@ class FunkMF(RecommenderBase):
         >>> predictions = funk_mf.test(testset, verbose=False)
 
     Args:
-        n_factors: The number of latent user/item factors. Default is ``50``.
-        n_epochs: The number of iterations for SGD optimization. Default is ``10``.
-        biased: Whether to use biases. Default is ``True``.
-        lr_all: The learning rate for all parameters. Default is ``.005``.
-        reg_all: The regularization term for L2 regularization. Default is ``.02``.
-        verbose: If ``True``, prints the current epochs. Default is ``True``.
+        n_factors ([int]): The number of latent user/item factors. Default is ``50``.
+        n_epochs ([int]): The number of iterations for SGD optimization. Default is ``10``.
+        biased ([bool]): Whether to use biases. Default is ``True``.
+        lr_all ([float]): The learning rate for all parameters. Default is ``.005``.
+        reg_all ([float]): The regularization term for L2 regularization. Default is ``.02``.
+        verbose ([bool]): If ``True``, prints the current epochs. Default is ``True``.
     """
 
     def __init__(
@@ -309,7 +315,17 @@ class FunkMF(RecommenderBase):
 
 
 class UserBasedCF(RecommenderBase):
-    """ """
+    """
+    Usage:
+        To instantiate the UserBasedCF object:
+        >>> ub_cf = UserBasedCF()
+
+        To fit model to the training data (e.g., training DataFrame):
+        >>> ub_cf.fit(train)
+
+        To generate rating predictions for all unseen user-item interactions:
+        >>> predictions = ub_cf.test()
+    """
 
     def __init__(self):
         self._rating_history = None
@@ -359,7 +375,7 @@ class UserBasedCF(RecommenderBase):
 
         return neighbours
 
-    def __predict_rating(self, user):
+    def __predict_rating(self, user: str):
         """ """
         # retrieve user rating history
         user_rating_history = self._rating_history[user]
@@ -425,7 +441,9 @@ class UserBasedCF(RecommenderBase):
             by=["count", "pred_overall"], ascending=False
         ).index.tolist()
 
-    def fit(self, trainset: pd.DataFrame, k_neighbours: float = 50, random_state=42):
+    def fit(
+        self, trainset: pd.DataFrame, k_neighbours: float = 50, random_state: int = 42
+    ):
         """Fit the learning algorithm to the training dataset.
 
         Computes user-item rating matrix, user similarities and defined k-neighbourhood.
@@ -447,7 +465,7 @@ class UserBasedCF(RecommenderBase):
         print("Generate k-neighbourhood of similar users...")
         self._k_neighbourhood = self.__get_k_neighbourhood(k_neighbours)
 
-    def test(self):
+    def test(self) -> dict:
         """Generate candidates items based on cosine similarity, sorted in descending order."""
         # retrieve unique users
         unique_users = self._rating_history.reset_index()["reviewerID"].tolist()
