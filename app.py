@@ -37,7 +37,7 @@ def main():
 
     # top-n items for recommendations
     st.sidebar.subheader("Select N-items Recommended:")
-    n_option = st.sidebar.selectbox("", (10, 25, 30, 45))
+    n_option = st.sidebar.selectbox("", (5, 10, 15, 20))
 
     st.write(" ")
 
