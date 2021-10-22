@@ -300,7 +300,9 @@ def generate_recommendations_df(
     except ValueError:
         top_ns = n_recommendations[max_recommended][0]
         top_ns_df = (
-            pd.DataFrame.from_dict(n_recommendations[45][0], orient="index")
+            pd.DataFrame.from_dict(
+                n_recommendations[max_recommended][0], orient="index"
+            )
             .stack()
             .to_frame()
             .reset_index()
