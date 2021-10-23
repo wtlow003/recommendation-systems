@@ -1,7 +1,0 @@
-# removing unnecessary materials for streamlit
-/models/
-/data/processed/
-/data/interim/
-/data/saved_data/
-*.ipynb
-/data/evaluation/*_test.csv
