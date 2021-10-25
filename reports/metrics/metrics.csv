@@ -1,0 +1,49 @@
+﻿Category,Algorithm,N,Recall@N,Novelty@N
+Grocery and Gourmet Food,UB-CF,5,0.01485,0.88493
+Grocery and Gourmet Food,UB-CF,10,0.02174,0.90641
+Grocery and Gourmet Food,UB-CF,15,0.02640,0.92097
+Grocery and Gourmet Food,UB-CF,20,0.03053,0.93147
+Grocery and Gourmet Food,FUNK-SVD,5,0.00867,0.83229
+Grocery and Gourmet Food,FUNK-SVD,10,0.01355,0.85758
+Grocery and Gourmet Food,FUNK-SVD,15,0.01708,0.86792
+Grocery and Gourmet Food,FUNK-SVD,20,0.02089,0.87420
+Grocery and Gourmet Food,TI-MF,5,0.00762,0.88465
+Grocery and Gourmet Food,TI-MF,10,0.01075,0.90600
+Grocery and Gourmet Food,TI-MF,15,0.01380,0.91437
+Grocery and Gourmet Food,TI-MF,20,0.01621,0.92123
+Grocery and Gourmet Food,RANDOM,5,0.00019,0.96479
+Grocery and Gourmet Food,RANDOM,10,0.00046,0.95775
+Grocery and Gourmet Food,RANDOM,15,0.00096,0.95605
+Grocery and Gourmet Food,RANDOM,20,0.00128,0.95740
+Grocery and Gourmet Food,ER-CBF,5,0.01361,0.93771
+Grocery and Gourmet Food,ER-CBF,10,0.02177,0.94207
+Grocery and Gourmet Food,ER-CBF,15,0.02927,0.94574
+Grocery and Gourmet Food,ER-CBF,20,0.03584,0.94881
+Grocery and Gourmet Food,MOD-ECF,5,0.00242,0.96789
+Grocery and Gourmet Food,MOD-ECF,10,0.00491,0.96825
+Grocery and Gourmet Food,MOD-ECF,15,0.00699,0.96826
+Grocery and Gourmet Food,MOD-ECF,20,0.00972,0.96829
+Pet Supplies,UB-CF,5,0.00796,0.87516
+Pet Supplies,UB-CF,10,0.01097,0.91580
+Pet Supplies,UB-CF,15,0.01501,0.92728
+Pet Supplies,UB-CF,20,0.02131,0.93314
+Pet Supplies,FUNK-SVD,5,0.00507,0.79858
+Pet Supplies,FUNK-SVD,10,0.00893,0.79893
+Pet Supplies,FUNK-SVD,15,0.01312,0.80896
+Pet Supplies,FUNK-SVD,20,0.01613,0.82021
+Pet Supplies,TI-MF,5,0.00351,0.91345
+Pet Supplies,TI-MF,10,0.00498,0.92980
+Pet Supplies,TI-MF,15,0.00679,0.93399
+Pet Supplies,TI-MF,20,0.00888,0.93343
+Pet Supplies,RANDOM,5,0.00039,0.92140
+Pet Supplies,RANDOM,10,0.00085,0.91573
+Pet Supplies,RANDOM,15,0.00129,0.91934
+Pet Supplies,RANDOM,20,0.00165,0.92434
+Pet Supplies,ER-CBF,5,0.01616,0.94879
+Pet Supplies,ER-CBF,10,0.02474,0.95356
+Pet Supplies,ER-CBF,15,0.03334,0.95632
+Pet Supplies,ER-CBF,20,0.03927,0.95855
+Pet Supplies,MOD-ECF,5,0.00439,0.95870
+Pet Supplies,MOD-ECF,10,0.00840,0.96224
+Pet Supplies,MOD-ECF,15,0.01274,0.96423
+Pet Supplies,MOD-ECF,20,0.01571,0.96555
