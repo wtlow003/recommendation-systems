@@ -106,7 +106,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligu
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
 
-#### 3. Recall@N for Cold-start Users
+#### 3. `Recall@N` for Cold-start Users
 
 ![Recall@N for Cold-start Users](reports/metrics/cold_start_recall@n.png)
 
@@ -115,9 +115,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligu
 ### Web Application Demo
 ------------
 
-![Web Application for Exploring Sample Users' Recommendation List](reports/streamlit.gif)
+<p align="center">
+    <img width="600" src="reports/streamlit.gif">
+</p>
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+
+The Streamlit web application can be accessed at: https://share.streamlit.io/wtlow003/recommendation-systems/main/app.py
 
 ### Conclusion and Future Work
 ------------
