@@ -5,6 +5,8 @@ Leveraging Unsupervised Representation Learning with Reviews to Improve Top-N Re
 1. [Abstract](#abstract)
 2. [Requirements](#requirements)
 3. [Getting Started](#getting-started)
+    * [Generate Recommendations w/ CLI](#generate-recommendations-w%2F-cli%3A)
+    * [Experimental Setup w/ Notebook](#experimental-setup-w%2F-notebook%3A)
 4. [Project Overview](#project-overview)
     * [Dataset](#dataset)
     * [Data Understanding and Preparation](#data-understanding-and-preparation)
@@ -24,10 +26,70 @@ The proposed methodologies are then compared to traditional recommendation algor
 
 ## Requirements
 
+To run the project, we **highly** advised you create a virtual environment to self-contain the necessary dependencies required to generate recommendations.
+
+To create a virtual environment `virtualenv`:
+
+###### For Windows:
+```console
+py -m pip install --user virtualenv
+py -m venv .venv
+```
+
+###### For Mac OS:
+```console
+python3 -m pip install --user virtualenv
+python3 -m venv .venv
+```
+
+To activate the virtual environment `.venv`:
+
+###### For Windows:
+```console
+source .\.venv\Scripts\activate
+
+# check virtual environment activated
+where python
+```
+
+###### For Mac OS:
+```console
+source .venv/bin/activate
+
+# check virtual environment activated
+which python
+```
+
+To install the necessary dependencies within `.venv`:
+
+###### For Windows:
+```console
+py -m pip install -r requirements.txt
+```
+
+###### For Mac OS:
+```console
+python3 -m pip install -r requirements.txt
+```
 
 ## Getting Started
 
-To run the experiments setup of this project, ensure that following files are populated in their respective folders:
+
+To get the raw data, please visit: https://jmcauley.ucsd.edu/data/amazon/. In our project usage, we require 4 datasets, belonging to **TWO (2)** categories experimented:
+
+> Place all downloaded raw data into the following directory, `data/raw`.
+
+###### 5-core Reviews and Ratings:
+
+1. Grocery and Gourmey Food (5-core): http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Grocery_and_Gourmet_Food_5.json.gz
+2. Pet Supplies: http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Pet_Supplies_5.json.gz
+
+###### Item Metadata:
+
+1. Grocery and Gourmet Food: http://deepyeti.ucsd.edu/jianmo/amazon/metaFiles2/meta_Grocery_and_Gourmet_Food.json.gz
+2. Pet Supplies: http://deepyeti.ucsd.edu/jianmo/amazon/metaFiles2/meta_Pet_Supplies.json.gz
+
+In order to run the experiments setup of this project, ensure that following files are populated in their respective folders:
 * `data/evaluation/Grocery_and_Gourmet_Food_train.csv`
 * `data/evaluation/Grocery_and_Gourmet_Food_test.csv`
 * `data/evaluation/Pet_Supplies_train.csv`
@@ -40,37 +102,90 @@ To run the experiments setup of this project, ensure that following files are po
 * `models/lda/Pet_Supplies_lda.model`
 
 If any of the files is **NOT** present, run the following commands to generate all the necessary data and models:
-```python
-python3 src/prepare.py
-python3 src/featurized.py
-python3 src/split_train_test.py
-python3 src/generate_vectors.py
+```bash
+dvc repro --force
 ```
 * For the *lda* model, you can refer to the commented-out section `Preparing Topic Vectors [Train/Load]` in:
     * `03-lwt-updated-experimental-setup-ti-mf-ps` or
     * `09-lwt-updated-exprimentatl-setup-ti-mf-ggf`
 * After generating the required *lda* model, ensure that you place the model under the directory `models/lda/{category}_lda.model`.
 
+#### Generate Recommendations w/ `CLI`:
+
+If you prefer working in the command line environment, run the following command to train a single algorithm and save the recommendations into a `SQLite` database:
+
+```console
+# python3 src/train.py --help
+>> Usage: train.py [OPTIONS]
+
+  Train recommender algorithms to generate top-N recommendation list.
+
+Options:
+  --category TEXT     Category for recommendations.  [required]
+  --algorithm TEXT    Recommendation algorithms.  [required]
+  --n INTEGER         N-number of items recommended.  [required]
+  --epochs INTEGER    Number of training epochs.
+  --lr FLOAT          Learning rate.
+  --beta FLOAT        Regularisation rate.
+  --input_path TEXT   Path to training dataset.
+  --output_path TEXT  Path to save recommendations.
+  --d2v_path TEXT     Path to trained doc2vec model.
+  --lda_path TEXT     Path to trained LDA model.
+  --help              Show this message and exit.
+
+# EXAMPLES:
+# top-10 recommendations for pet supplies, using ER-CBF
+# only first two args is necessarily, the rest are optional, with default path set
+python3 src/train.py \
+--category=Pet_Supplies \
+--algorithm=er-cbf \
+--n=10
+
+# top-5 recommendations for grocery and gourmet food, using TI-MF
+python3 src/train.py \
+--category=Grocery_and_Gourmet_Food \
+--algorithm=ti-mf \
+--n=5 \
+--epochs=5 \
+--lr=0.005 \
+--beta=0.1
+```
+The arguments for the `train.py` script:
+
+* `CATEGORY`: Category to generate recommendations for, e.g., [`pet_supplies`, `grocery_and_gourmet_food`]
+* `ALGORITHM`: Selecting the algorithms to generate recommendations, e.g., [`er-cbf`, `mod-ecf`, `ti-mf`, `funk-svd`, `ub-cf`]
+* `N`: *N*-number of items to be recommended for each users
+* `EPOCHS`: Number of training epochs, default to 5
+* `LR`: The learning rate for the algorithm (Matrix Factorisation-based), defaults to 0.005
+* `BETA`: The regularisation rate (Matrix Factorisation-based), defaults to 0.1
+* `INPUT_PATH`: Path containing train and  test datasets, defaults to `data/evaluation`
+* `OUTPUT_PATH`: Path to create and save *SQLite* database containing recommendations, defaults to `./`
+* `D2V_PATH`: Path containing trained and serialised Paragraph Vector (doc2vec) model, defaults to `models/d2v`
+* `LDA_PATH`: Path containing trained and serialised LDA model, defaults to `models/lda`
+
+#### Experimental Setup w/ `Notebook`:
 
 When all files are verified to be in the respective folders, you may run the following **TWELVE (12)** experimental notebooks, each documenting the recommendation process for a specific algorithm (e.g., `UB-CF`) in a one of two categories (`Pet_Supplies` or `Grocery_and_Gourmet_Food`).
+
+> Experimental setup consists of metric evaluation of `Recall@N` (overall & cold-start users) and `Novelty@N` (overall users).
 
 A brief description of the notebooks (`.ipynb`) are detailed as the following:
 
 ###### For Pet Supplies:
-1. `01-lwt-updated-experiment-setup-ub-cf-ps`: User-based Collaborative Filtering.
-2. `02-lwt-updated-experiment-setup-funk-svd-ps`: Funk's Matrix Factorisation.
-3. `03-lwt-updated-experiment-setup-ti-mf-ps`: Topic-Initialised Matrix Factorisation.
-4. `04-lwt-updated-experiment-setup-random-ps`: Random Normal Rating Prediction.
-5. `05-lwt-updated-experiment-setup-er-cbf-ps`: (*Proposed*) Embedded Review Content-based Filtering.
-6. `06-lwt-updated-experiment-setup-mod-ecf-ps`: (*Proposed*) Model-based Embedded Collborative Filtering.
+1. `01-lwt-experiment-setup-ub-cf-ps`: User-based Collaborative Filtering.
+2. `02-lwt-experiment-setup-funk-svd-ps`: Funk's Matrix Factorisation.
+3. `03-lwt-experiment-setup-ti-mf-ps`: Topic-Initialised Matrix Factorisation.
+4. `04-lwt-experiment-setup-random-ps`: Random Normal Rating Prediction.
+5. `05-lwt-experiment-setup-er-cbf-ps`: (*Proposed*) Embedded Review Content-based Filtering.
+6. `06-lwt-experiment-setup-mod-ecf-ps`: (*Proposed*) Model-based Embedded Collborative Filtering.
 
 ###### For Grocery and Gourmet food
-7. `07-lwt-updated-experiment-setup-ub-cf-ggf`: User-based Collaborative Filtering.
-8. `08-lwt-updated-experiment-setup-funk-svd-ggf`: Funk's Matrix Factorisation.
-9. `09-lwt-updated-experiment-setup-ti-mif-ggf`: Topic-Initialised Matrix Factorisation.
-10. `10-lwt-updated-experiment-setup-random-ggf`: Random Normal Rating Prediction.
-11. `11-lwt-updated-experiment-setup-er-cbf-ggf`: (*Proposed*) Embedded Review Content-based Filtering.
-12. `12-lwt-updated-experiment-setup-mod-ecf-ggf`: (*Proposed*) Model-based Embedded Collaborative Filtering.
+7. `07-lwt-experiment-setup-ub-cf-ggf`: User-based Collaborative Filtering.
+8. `08-lwt-experiment-setup-funk-svd-ggf`: Funk's Matrix Factorisation.
+9. `09-lwt-experiment-setup-ti-mif-ggf`: Topic-Initialised Matrix Factorisation.
+10. `10-lwt-experiment-setup-random-ggf`: Random Normal Rating Prediction.
+11. `11-lwt-experiment-setup-er-cbf-ggf`: (*Proposed*) Embedded Review Content-based Filtering.
+12. `12-lwt-experiment-setup-mod-ecf-ggf`: (*Proposed*) Model-based Embedded Collaborative Filtering.
 
 To execute each experimental setup, simply select under the menu ribbon: `Kernel` -> `Restart & Run All`.
 * Note: If you do not with to overwrite any existing saved top-N recommendation lists in `./recommender.db`, simply comment out the code under the section: `Store in SQLite DB`.
