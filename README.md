@@ -161,12 +161,12 @@ python3 src/train.py \
 ```
 The arguments for the `train.py` script:
 
-* `CATEGORY`: Category to generate recommendations for, e.g., [`pet_supplies`, `grocery_and_gourmet_food`]
+* `CATEGORY`: Category to generate recommendations for, e.g., [`Pet_Supplies`, `Grocery_and_Gourmet_Food`]
 * `ALGORITHM`: Selecting the algorithms to generate recommendations, e.g., [`er-cbf`, `mod-ecf`, `ti-mf`, `funk-svd`, `ub-cf`]
 * `N`: *N*-number of items to be recommended for each users
-* `EPOCHS`: Number of training epochs, default to 5
-* `LR`: The learning rate for the algorithm (Matrix Factorisation-based), defaults to 0.005
-* `BETA`: The regularisation rate (Matrix Factorisation-based), defaults to 0.1
+* `EPOCHS`: Number of training epochs, default to `5`
+* `LR`: The learning rate for the algorithm (Matrix Factorisation-based), defaults to `0.005`
+* `BETA`: The regularisation rate (Matrix Factorisation-based), defaults to `0.1`
 * `INPUT_PATH`: Path containing train and  test datasets, defaults to `data/evaluation`
 * `OUTPUT_PATH`: Path to create and save *SQLite* database containing recommendations, defaults to `./`
 * `D2V_PATH`: Path containing trained and serialised Paragraph Vector (doc2vec) model, defaults to `models/d2v`

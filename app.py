@@ -47,7 +47,7 @@ def main():
         with st.spinner("Identifying past items"):
             purchase_history = DATA[DATA["reviewerID"] == user_option]
             st.table(purchase_history[["asin", "title"]])
-            st.subheader(f"Top-{n_option} Recommended Items:")
+            st.subheader(f"Top-`{n_option}` Recommended Items:")
             n_recommended = pd.read_sql(
                 f"""SELECT *
                     FROM {CATEGORY}

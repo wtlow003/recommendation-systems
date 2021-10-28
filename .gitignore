@@ -102,4 +102,7 @@ data/external
 # reports/
 
 # literatures
-papers/
+literatures_review/
+
+# slides
+presentation_slides/
