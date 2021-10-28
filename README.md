@@ -5,8 +5,8 @@ Leveraging Unsupervised Representation Learning with Reviews to Improve Top-N Re
 1. [Abstract](#abstract)
 2. [Requirements](#requirements)
 3. [Getting Started](#getting-started)
-    * [Generate Recommendations w/ CLI](#generate-recommendations-w%2F-cli%3A)
-    * [Experimental Setup w/ Notebook](#experimental-setup-w%2F-notebook%3A)
+    * [Generate Recommendations w/ CLI](#generate-recommendations-w-cli)
+    * [Experimental Setup w/ Notebook](#experimental-setup-w-notebook)
 4. [Project Overview](#project-overview)
     * [Dataset](#dataset)
     * [Data Understanding and Preparation](#data-understanding-and-preparation)
@@ -105,6 +105,15 @@ If any of the files is **NOT** present, run the following commands to generate a
 ```bash
 dvc repro --force
 ```
+* NOTE: `dvc repro --force` by default will generate the files for `Grocery_and_Gourmet_Food`.
+
+To generate the necessary data for `Pet_Supplies`, make the following change to the file `params.yaml`:
+```yaml
+prepare:
+  categories:
+    &a Pet_Supplies
+```
+
 * For the *lda* model, you can refer to the commented-out section `Preparing Topic Vectors [Train/Load]` in:
     * `03-lwt-updated-experimental-setup-ti-mf-ps` or
     * `09-lwt-updated-exprimentatl-setup-ti-mf-ggf`
