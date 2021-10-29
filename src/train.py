@@ -148,7 +148,7 @@ def main(
         logging.info("[3/5]    Generating candidate items...")
         candidate_items = model.test(testset, verbose=False)
 
-    logging.info("[4/5]    Generating top-10 recommendations...")
+    logging.info(f"[4/5]    Generating top-{n} recommendations...")
     if algorithm in ["ti-mf", "mod-ecf"]:
         top_ns = model.get_top_n(candidate_items, n)
     else:
