@@ -26,7 +26,7 @@ The proposed methodologies are then compared to traditional recommendation algor
 
 ## Requirements
 
-To run the project, we **highly** advised you create a virtual environment to self-contain the necessary dependencies required to generate recommendations.
+To run the project, I **highly** advised you create a virtual environment to self-contain the necessary dependencies required to generate recommendations.
 
 To create a virtual environment `virtualenv`:
 
