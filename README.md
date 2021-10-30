@@ -174,7 +174,17 @@ The arguments for the `train.py` script:
 
 #### Experimental Setup w/ `Notebook`:
 
-When all files are verified to be in the respective folders, you may run the following **TWELVE (12)** experimental notebooks, each documenting the recommendation process for a specific algorithm (e.g., `UB-CF`) in a one of two categories (`Pet_Supplies` or `Grocery_and_Gourmet_Food`).
+When all files are verified to be in the respective folders, you may run the following **TWELVE (12)** experimental notebooks, located in `notebooks/experiments`.
+
+```console
+# from root directory
+cd notebooks/experiments
+
+# launch notebook server
+jupyter notebook
+```
+
+Each notebook documents the recommendation process for a specific algorithm (e.g., `UB-CF`) in a one of two categories (`Pet_Supplies` or `Grocery_and_Gourmet_Food`).
 
 > Experimental setup consists of metric evaluation of `Recall@N` (overall & cold-start users) and `Novelty@N` (overall users).
 
@@ -204,7 +214,7 @@ To execute each experimental setup, simply select under the menu ribbon: `Kernel
 ### Dataset
 ------------
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+To construct a review-based RS, we acquired product review data from public sources. Our primary data source is the [Amazon dataset](https://jmcauley.ucsd.edu/data/amazon/), previously developed by McAuley, Targett, Shi, and Hengel (2015). Although there were 24 different item categories available, we are most interested in the following review categories: Pet Supplies and Grocery and Gourmet Food. Due to hardware limitations, we decided to conduct our research on smaller dense subsets of the reviews data, where the dataset is reduced and extracted to 5-core, implying that each user and item has at least five reviews.
 
 ### Data Understanding and Preparation
 ------------
@@ -213,21 +223,31 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligu
 
 ![Long-tail](reports/figures/long-tail-annotated.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
-
+To better understand the potential cold-start problem in our datasets, we explored the popularity distribution of items regarding the number of reviews received by each item. In both Grocery and Gourmet Food and Pet Supplies, only a handful of items manage to obtain high popularity, while the remaining items have minor user interactions in comparison. The top 20% of Grocery and Gourmet Food items has minimally 16 reviews, while in Pet Supplies, the top 20% possessed at least 25 reviews.
 
 #### 2. Data Preparation
 
 ![Text Pre-processing Flowchart](reports/figures/text-preprocessing-flowchart.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+Review texts are pre-processed as an integral aspect of the text mining process for our item categories. To use the review texts independently or in conjunction with product ratings for the recommender system, we must transform the text into something understandable for the algorithm while also ensuring text standardisation across all reviews. Cleaning and standardising the data are critical steps in pre-processing the review texts for our proposed approaches.
+
+The process entails:
+
+* Expanding contractions
+* Removing special characters such as punctuations and whitespace characters
+* Changing review texts into lower case
+* Text normalisation using lemmatisation
+* Exclude stop words
+* Tokenisation
 
 ### Proposed Approaches
 ------------
 
 ![Proposed Modelling Approaches in Recommendation Process](reports/figures/recommendation-framework.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+We proposed two variations of the review-based approach: *Embedded Review Content-based Filtering* and *Model-based Embedded Collaborative Filtering*. We generate a top-N set of recommendations for these approaches, where *N* denotes the number of items recommended to a user. Both approaches leverage on review embeddings generated learnt through the *Paragraph Vector*, or commonly known as `Doc2Vec` model developed by Le and Mikolov (2014).
+
+The implementation of the algorithms can be found here: [MOD-ECF](https://github.com/wtlow003/recommendation-systems/blob/2a9e885ee6e378f8d4c957e48a0063c63d4cb73a/src/models/algorithms.py#L36) and [ER-CBF](https://github.com/wtlow003/recommendation-systems/blob/2a9e885ee6e378f8d4c957e48a0063c63d4cb73a/src/models/algorithms.py#L499).
 
 ### Findings
 ------------
@@ -236,19 +256,19 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligu
 
 ![Recall@N for Overall Users](reports/metrics/recall@n.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+As evident, ER-CBF outperforms the other approaches in both categories, illustrating the robustness of the methodology of generating recommendations based on similarities of features exhibited in the user profile against unseen item profiles. In the top-5 recommendation list, ER-CBF achieved 1.36% in Grocery and Gourmet Food and 1.61% in Pet Supplies for recall@5. Only UB-CF (1.48%) outperformed in the Grocery and Gourmet Food category in the top-5 recommendation list. In most top-N settings across both categories, UB-CF and FUNK-SVD exhibited little comparable performance against the ER-CBF.
 
 #### 2. `Novelty@N` for Overall Users
 
 ![Novelty@N for Overall Users](reports/metrics/novelty@n.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+As far as novelty@N is concerned, ER-CBF and MOD-ECF approach consistently outperform other approaches in both categories in different top-N settings. For top-10 recommendations in Grocery and Gourmet Food, MOD-ECF was the best approach, with 96.83% in novelty@N. Meanwhile, in Pet Supplies, MOD-ECF with 96.22% novelty@N was the best approach, closely followed by ER-CBF (approximately 95.36%). Generally, the poorest performance novelty@N in a top-10 recommendation list in both categories occurred in traditional algorithms, such as UB-CF and FUNK-SVD.
 
 #### 3. `Recall@N` for Cold-start Users
 
 ![Recall@N for Cold-start Users](reports/metrics/cold_start_recall@n.png)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+In order to further determine the performance of the presented approaches, we look into the accuracy performance for new users with relatively little previous purchase history. We conducted a cross-analysis on accuracy for users with two or fewer items purchased within the training set to understand the behaviour of the approaches when dealing with users suffering the cold-start problem. Based on the observations, ER-CBF consistently outperforms other approaches across various N-items recommended in both categories. The performance suggests that we could maximise the information extracted from minimal reviews by utilising the paragraph vector by simultaneously considering the word semantics and contexts within each review when aggregated on an item level. The overall performance of the approaches exhibited a similar trend when evaluated against the overall users as in both categories, where the proportion of users with two or fewer items purchased are prevalent in the users' demographics of both Grocery and Gourmet Food (56.63%) and Pet Supplies (43.88%) within the training set.
 
 ### Web Application Demo
 ------------
@@ -257,14 +277,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligu
     <img width="600" src="reports/streamlit.gif">
 </p>
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+To enable the ease of further validating the idea that the representation learning technique improves the quality and relevancy of recommendations, we developed a web application that allows for quick explorations and comparisons of the recommended items across different algorithms.
 
 The Streamlit web application can be accessed at: https://share.streamlit.io/wtlow003/recommendation-systems/main/app.py
 
 ### Conclusion and Future Work
 ------------
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere ipsum ligula, non euismod justo vulputate et. Vestibulum in pharetra est. Sed faucibus, lorem vitae facilisis facilisis, velit risus rutrum nibh, id auctor turpis est at augue. Sed ac dignissim orci. Mauris in felis aliquam, interdum mauris quis, ornare neque. Donec magna dui, auctor id enim non, dignissim malesuada mi. Etiam et purus vehicula dolor scelerisque molestie. Curabitur finibus urna eget tristique congue.
+This project proposed both the `ER-CBF` and `MOD-ECF` approaches, outlining methodologies of combining an alternative source of information such as user reviews for recommendation through review representations generated via unsupervised representation learning method the Paragraph Vector model. What is more, we presented further filtering variants of traditional algorithms such as content-based filtering (ER-CBF) and collaborative filtering (MOD-ECF) by incorporating product reviews as both a source of sole and additional information to complement product ratings in the recommendation process. The presented results on two Amazon e-commerce categories, Pet Supplies and Grocery and Gourmet Food, has shown the robustness of ER-CBF across both categories and as well as being the best performer in both overall and cold-start users across all top-N recommendation lists.  The results illustrate the potential in improving existing recommendation systems using the paragraph vector model.
+
+In the future, we hope to extend the research work for the review-based system. Sentiment analysis may be incorporated to exclude negative reviews when developing user and item representations to include only positive preferences. Besides user-generated content such as reviews, existing textual information such as item descriptions and tags may also be incorporated. As the application of the Paragraph Vector model in a recommendation setting differs from usage in traditional natural language processing tasks (Caselles-Dupré, Lesaint, & Royo-Letelier, 2018), a further experiment in hyperparameter tuning may also be considered to see the impact of hyperparameters such as the number of training epochs, window-size on the overall recommender performance. Lastly, ranking metrics such as MRR and NDCG can be considered to evaluate the placement of relevant items within the top-N recommendation.
 
 Project Organisation
 ------------
@@ -282,14 +304,14 @@ Project Organisation
     │
     ├── models             <- Trained and serialized models, model predictions, or model summaries
     │   └── d2v            <- Trained and serialized Paragraph Vector model (Gensim's `Doc2Vec`).
-    │   └── lda            <- Trained and serialized Latent Dirchlet Allocaton (Gensim's `ldamodel`).
+    │   └── lda            <- Trained and serialized Latent Dirchlet Allocaton (Gensim's `ldamodel`)
     │
     │
     ├── notebooks
-    │   └── exploratory    <- Jupyter notebooks for initial exploration. Naming convention is a
-    │                         number (for ordering), the creator's initials, and a short `-`
-    │                         delimited description, e.g. `1.0-jqp-initial-data-exploration`.
-    │
+    │   ├── exploratory    <- Jupyer notebooks for initial exploration.
+    │   │
+    │   └── experiments    <- Jupyter notebooks for experimental setups.
+    │   
     │
     ├── reports
     │   └── figures        <- Generated graphics and figures for illustrating concepts.
