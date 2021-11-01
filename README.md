@@ -221,13 +221,13 @@ To construct a review-based RS, we acquired product review data from public sour
 
 #### 1. Data Understanding
 
-![Long-tail](reports/figures/long-tail-annotated.png)
+![Long-tail](reports/figures/long-tail.jpg)
 
 To better understand the potential cold-start problem in our datasets, we explored the popularity distribution of items regarding the number of reviews received by each item. In both Grocery and Gourmet Food and Pet Supplies, only a handful of items manage to obtain high popularity, while the remaining items have minor user interactions in comparison. The top 20% of Grocery and Gourmet Food items has minimally 16 reviews, while in Pet Supplies, the top 20% possessed at least 25 reviews.
 
 #### 2. Data Preparation
 
-![Text Pre-processing Flowchart](reports/figures/text-preprocessing-flowchart.png)
+![Text Pre-processing Flowchart](reports/figures/text-preprocessing.jpg)
 
 Review texts are pre-processed as an integral aspect of the text mining process for our item categories. To use the review texts independently or in conjunction with product ratings for the recommender system, we must transform the text into something understandable for the algorithm while also ensuring text standardisation across all reviews. Cleaning and standardising the data are critical steps in pre-processing the review texts for our proposed approaches.
 
@@ -243,7 +243,7 @@ The process entails:
 ### Proposed Approaches
 ------------
 
-![Proposed Modelling Approaches in Recommendation Process](reports/figures/recommendation-framework.png)
+![Proposed Modelling Approaches in Recommendation Process](reports/figures/recommendation-framework.jpg)
 
 We proposed two variations of the review-based approach: *Embedded Review Content-based Filtering* and *Model-based Embedded Collaborative Filtering*. We generate a top-N set of recommendations for these approaches, where *N* denotes the number of items recommended to a user. Both approaches leverage on review embeddings generated learnt through the *Paragraph Vector*, or commonly known as `Doc2Vec` model developed by Le and Mikolov (2014).
 
