@@ -13,21 +13,6 @@ from models import algorithms
 from utilities import utilities
 
 
-def train_model(algorithm: str, epochs: int, lr: float, beta: float):
-    """Training models with respective setting given algorithm.
-
-    Args:
-        algorithm ([str]): Recommendation algorithm.
-        epochs ([int]): Number of training epochs.
-        lr ([float]): Learning rate.
-        beta ([float]): Regularisation rate.
-
-    Return:
-        ([model]): The trained model, for extracting top-N recommendations.
-    """
-    pass
-
-
 @click.command()
 @click.option(
     "--category", required=True, type=str, help="Category for recommendations."
@@ -76,7 +61,6 @@ def main(
         level=logging.DEBUG, format="%(asctime)s %(message)s", handlers=[stream_handler]
     )
 
-    # load training and testing data
     logging.info("[1/5]    Loading train dataset...")
     train = pd.read_csv(f"{input_path}/{category}_train.csv")
 
@@ -99,7 +83,7 @@ def main(
         candidate_items = model.test()
     elif algorithm == "funk-svd":
         model = algorithms.FunkMF(n_epochs=epochs, lr_all=lr, reg_all=beta)
-        model.fit(train, verbose=True)
+        model.fit(train)
         testset = model.trainset.build_anti_testset()
         logging.info("[3/5]    Generating candidate items...")
         model.test(testset, verbose=False)
