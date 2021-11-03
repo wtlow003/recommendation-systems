@@ -1,8 +1,8 @@
 ﻿Category,Algorithm,N,Recall@N,Novelty@N
-Grocery and Gourmet Food,UB-CF,5,0.01559,0.93814
-Grocery and Gourmet Food,UB-CF,10,0.02107,0.95252
-Grocery and Gourmet Food,UB-CF,15,0.02435,0.96120
-Grocery and Gourmet Food,UB-CF,20,0.02729,0.96711
+Grocery and Gourmet Food,UB-CF,5,0.01585,0.93808
+Grocery and Gourmet Food,UB-CF,10,0.02167,0.95227
+Grocery and Gourmet Food,UB-CF,15,0.02475,0.96113
+Grocery and Gourmet Food,UB-CF,20,0.02776,0.96685
 Grocery and Gourmet Food,FUNK-SVD,5,0.00923,0.83225
 Grocery and Gourmet Food,FUNK-SVD,10,0.01385,0.85747
 Grocery and Gourmet Food,FUNK-SVD,15,0.01739,0.86795
@@ -19,14 +19,14 @@ Grocery and Gourmet Food,ER-CBF,5,0.01585,0.93636
 Grocery and Gourmet Food,ER-CBF,10,0.02408,0.94052
 Grocery and Gourmet Food,ER-CBF,15,0.03251,0.94431
 Grocery and Gourmet Food,ER-CBF,20,0.03967,0.94768
-Grocery and Gourmet Food,MOD-ECF,5,0.00242,0.96789
-Grocery and Gourmet Food,MOD-ECF,10,0.00491,0.96825
-Grocery and Gourmet Food,MOD-ECF,15,0.00699,0.96826
-Grocery and Gourmet Food,MOD-ECF,20,0.00972,0.96829
-Pet Supplies,UB-CF,5,0.00440,0.90990
-Pet Supplies,UB-CF,10,0.00602,0.94395
+Grocery and Gourmet Food,MOD-ECF,5,0.00281,0.97652
+Grocery and Gourmet Food,MOD-ECF,10,0.00488,0.97484
+Grocery and Gourmet Food,MOD-ECF,15,0.00682,0.97395
+Grocery and Gourmet Food,MOD-ECF,20,0.00990,0.97335
+Pet Supplies,UB-CF,5,0.00428,0.90947
+Pet Supplies,UB-CF,10,0.00554,0.94476
 Pet Supplies,UB-CF,15,0.00873,0.95027
-Pet Supplies,UB-CF,20,0.01439,0.95269
+Pet Supplies,UB-CF,20,0.01445,0.95262
 Pet Supplies,FUNK-SVD,5,0.00512,0.79950
 Pet Supplies,FUNK-SVD,10,0.00909,0.79886
 Pet Supplies,FUNK-SVD,15,0.01289,0.80873
