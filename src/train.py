@@ -9,8 +9,7 @@ import pandas as pd
 from gensim.models.doc2vec import Doc2Vec
 from sqlalchemy import create_engine
 
-from models import algorithms
-from utilities import utilities
+from models.train_model import train_algorithm
 
 
 @click.command()
@@ -76,67 +75,18 @@ def main(
     # instantiate algorithms and training loops
     logging.info(f"[3/5]    Training {algorithm} model...")
     logging.info("Estimated training time: 15-60mins, on 1.4GHz i5, 16GB Ram.")
-    if algorithm == "er-cbf":
-        model = algorithms.EmbeddedReviewCBF(item_d2v)
-        model.fit(train)
-        logging.info("[3/5]    Generating candidate items...")
-        candidate_items = model.test()
-    elif algorithm == "funk-svd":
-        model = algorithms.FunkMF(n_epochs=epochs, lr_all=lr, reg_all=beta)
-        model.fit(train)
-        testset = model.trainset.build_anti_testset()
-        logging.info("[3/5]    Generating candidate items...")
-        model.test(testset, verbose=False)
-    elif algorithm == "ub-cf":
-        model = algorithms.UserBasedCF()
-        model.fit(train)
-        logging.info("[3/5]    Generating candidate items...")
-        candidate_items = model.test()
-    else:
-        if algorithm == "ti-mf":
-            (
-                user_idx_map,
-                user_vecs,
-                item_idx_map,
-                item_vecs,
-            ) = utilities.generate_user_item_vectors(train, lda)
-            user_factors, item_factors = user_vecs.to_numpy(), item_vecs.to_numpy()
-            model = algorithms.PreInitialisedMF(
-                user_map=user_idx_map,
-                item_map=item_idx_map,
-                user_factor=user_factors,
-                item_factor=item_factors,
-                num_epochs=epochs,
-                learning_rate=lr,
-                beta=beta,
-            )
-        elif algorithm == "mod-ecf":
-            (
-                user_idx_map,
-                user_vecs,
-                item_idx_map,
-                item_vecs,
-            ) = utilities.generate_user_item_embeddings(train, user_item_d2v)
-            user_factors, item_factors = user_vecs.to_numpy(), item_vecs.to_numpy()
-            model = algorithms.PreInitialisedMF(
-                user_map=user_idx_map,
-                item_map=item_idx_map,
-                user_factor=user_factors,
-                item_factor=item_factors,
-                num_epochs=epochs,
-                learning_rate=lr,
-                beta=beta,
-            )
-        model.fit(train, verbose=True)
-        testset = model.trainset.build_anti_testset()
-        logging.info("[3/5]    Generating candidate items...")
-        candidate_items = model.test(testset, verbose=False)
-
-    logging.info(f"[4/5]    Generating top-{n} recommendations...")
-    if algorithm in ["ti-mf", "mod-ecf"]:
-        top_ns = model.get_top_n(candidate_items, n)
-    else:
-        top_ns = model.get_top_n(n)
+    TRAINING_PARAMS = {
+        "algorithm": algorithm,
+        "train": train,
+        "n": n,
+        "item_d2v": item_d2v,
+        "user_item_d2v": user_item_d2v,
+        "lda": lda,
+        "epochs": epochs,
+        "beta": beta,
+        "lr": lr,
+    }
+    top_ns = train_algorithm(**TRAINING_PARAMS)
 
     # transform top_ns into dataframe
     try:
@@ -157,7 +107,7 @@ def main(
     # add in the column specifying the algorithm
     top_ns_df["algorithm"] = algorithm
 
-    if algorithm in ["ti-mf", "mod-ecf", "funk-svd"]:
+    if algorithm in {"ti-mf", "mod-ecf", "funk-svd"}:
         top_ns_df["asin"] = top_ns_df["asin"].apply(lambda x: x[0])
 
     # getting item title
