@@ -222,7 +222,7 @@ To execute each experimental setup, simply select under the menu ribbon: `Kernel
 
 #### 1. Data Understanding
 
-![Long-tail](reports/figures/long-tail.jpg)
+![Long-tail](reports/figures/long-tail-annotated.jpg)
 
 [Redacted Until FYP Grading is Complete to Prevent Plagiarism Issue with TurnItIn]
 
