@@ -44,7 +44,7 @@ To activate the virtual environment `.venv`:
 
 ###### For Windows:
 ```console
-source .\.venv\Scripts\activate
+.\.venv\Scripts\activate
 
 # check virtual environment activated
 where python
@@ -121,6 +121,8 @@ prepare:
 
 If you prefer working in the command line environment, run the following command to train a single algorithm and save the recommendations into a `SQLite` database:
 
+> Replace `python3` with `py` if you are running on Windows with *Anaconda Prompt*.
+
 ```console
 # python3 src/train.py --help
 >> Usage: train.py [OPTIONS]
@@ -142,7 +144,7 @@ Options:
 
 # EXAMPLES:
 # top-10 recommendations for pet supplies, using ER-CBF
-# only first two args is necessarily, the rest are optional, with default path set
+# only first three(3) args is necessary, the rest are optional
 python3 src/train.py \
 --category=Pet_Supplies \
 --algorithm=er-cbf \
@@ -157,6 +159,7 @@ python3 src/train.py \
 --lr=0.005 \
 --beta=0.1
 ```
+
 The arguments for the `train.py` script:
 
 * `CATEGORY`: Category to generate recommendations for, e.g., [`Pet_Supplies`, `Grocery_and_Gourmet_Food`]
