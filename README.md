@@ -62,12 +62,12 @@ To install the necessary dependencies within `.venv`:
 
 ###### For Windows:
 ```console
-py -m pip install -r requirements.txt
+py -m pip install --no-cache-dir -r requirements.txt
 ```
 
 ###### For Mac OS:
 ```console
-python3 -m pip install -r requirements.txt
+python3 -m pip install --no-cache-dir -r requirements.txt
 ```
 
 ## Getting Started
