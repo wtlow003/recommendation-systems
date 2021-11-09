@@ -1,0 +1,22 @@
+version: "3.9"
+x-base:
+  &service-base
+  build:
+    context: .
+    dockerfile: Dockerfile
+  stdin_open: true
+  tty: true
+  image: "${IMAGE_NAME}-dev"
+  container_name: "${CONTAINER_NAME}-dev"
+  user: root
+  environment:
+    - IS_OFFLINE=true
+services:
+  script:
+    <<: *service-base
+    image:  jupyter/scipy-notebook:latest
+    volumes:
+      - ./:/recommender
+    ports:
+      - 8888:8888
+    container_name: recommender-container-dev
