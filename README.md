@@ -70,6 +70,12 @@ py -m pip install --no-cache-dir -r requirements.txt
 python3 -m pip install --no-cache-dir -r requirements.txt
 ```
 
+Similarly, `Docker` setup is also provided. To run the project in a Docker container:
+
+```docker
+docker-compose up --build script
+```
+
 ## Getting Started
 
 
